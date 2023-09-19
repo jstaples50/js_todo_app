@@ -19,7 +19,7 @@ import {
   deleteTodo,
 } from "../../helper/localStorage";
 
-const ToDo = ({ todo }) => {
+const ToDo = ({ todo, childChange, setChildChange }) => {
   const theme = useTheme();
   const statusButtonBlue = theme.palette.primary;
   const statusButtonOrange = theme.palette.warning;
@@ -28,37 +28,29 @@ const ToDo = ({ todo }) => {
   const [borderColor, setBorderColor] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("");
   const [open, setOpen] = useState(false);
-  const [priority, setPriority] = useState(todo.highPriority);
 
   const handleRemovePriorityClick = () => {
     updateTodoPriority(todo);
-    setPriority(false);
-    // TEMPORARY FIX: need to figure out state based solution
-    window.location.href = "/";
+    childChange ? setChildChange(false) : setChildChange(true);
   };
 
   const handleAddPriorityClick = () => {
     updateTodoPriority(todo);
-    setPriority(true);
+    childChange ? setChildChange(false) : setChildChange(true);
     setOpen(false);
-    // TEMPORARY FIX: need to figure out state based solution
-    window.location.href = "/";
   };
 
   const handleStatusChangeClick = (e) => {
     const selectedStatus = Number(e.target.getAttribute("data-status"));
-    // handleStatusChange();
     handleBorderColor(selectedStatus);
     updateTodoStatus(todo, selectedStatus);
+    childChange ? setChildChange(false) : setChildChange(true);
     setOpen(false);
-    // TEMPORARY FIX: need to figure out state based solution
-    window.location.href = "/";
   };
 
   const handleTodoDelete = () => {
     deleteTodo(todo);
-    // TEMPORARY FIX: need to figure out state based solution
-    window.location.href = "/";
+    childChange ? setChildChange(false) : setChildChange(true);
   };
 
   const handleBorderColor = (statusState) => {
@@ -80,7 +72,7 @@ const ToDo = ({ todo }) => {
 
   useEffect(() => {
     handleBorderColor(todo.status);
-  }, []);
+  }, [todo]);
 
   return (
     <Box
@@ -104,7 +96,8 @@ const ToDo = ({ todo }) => {
         <IconButton onClick={handleTodoDelete}>
           <HighlightOffOutlinedIcon />
         </IconButton>
-        {priority && (
+        {/* just priority before */}
+        {todo.highPriority && (
           <IconButton color="error" onClick={handleRemovePriorityClick}>
             <ErrorOutlineOutlinedIcon />
           </IconButton>

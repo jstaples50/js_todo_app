@@ -14,7 +14,7 @@ function App() {
       }}
     >
       <CssBaseline />
-      <h1>App Component</h1>
+      <h1>JS TODOS!</h1>
       <TodoFeed />
       <CategoryFeed />
     </div>

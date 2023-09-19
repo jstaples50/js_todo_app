@@ -24,6 +24,7 @@ const TodoFeed = () => {
   const [todo, setTodo] = useState("");
   const [todoArray, setTodoArray] = useState([]);
   const [highPriority, setHighPriority] = useState("outlined");
+  const [childChange, setChildChange] = useState(false);
 
   const handleTodoChange = (e) => {
     setTodo(e.target.value);
@@ -41,6 +42,15 @@ const TodoFeed = () => {
     setTodoToLocalStorage(newTodo);
     setTodo("");
     setHighPriority("outlined");
+    // childChange ? setChildChange(false) : setChildChange(true);
+    // console.log(childChange);
+    if (childChange) {
+      setChildChange(false);
+      console.log("submit child change true");
+    } else {
+      setChildChange(true);
+      console.log("submit child change false");
+    }
   };
 
   const handleHighPriorityClick = () => {
@@ -58,7 +68,7 @@ const TodoFeed = () => {
     const todosFromStorage = getTodosFromLocalStorage();
     const totalSortedArray = sortByStatusAndDate(todosFromStorage);
     setTodoArray(totalSortedArray);
-  }, [todo]);
+  }, [todo, childChange]);
 
   return (
     <Box>
@@ -108,7 +118,14 @@ const TodoFeed = () => {
       </form>
       <Box textAlign={"center"}>
         {todoArray.length ? (
-          todoArray.map((todo, index) => <ToDo key={index} todo={todo} />)
+          todoArray.map((todo, index) => (
+            <ToDo
+              key={index}
+              todo={todo}
+              childChange={childChange}
+              setChildChange={setChildChange}
+            />
+          ))
         ) : (
           <Typography>No Todos Yet!</Typography>
         )}
