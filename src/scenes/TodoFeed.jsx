@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Box, Typography } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Typography,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+} from "@mui/material";
 import Button from "@mui/material/Button";
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import { v4 as uuidv4 } from "uuid";
 import { sortByStatusAndDate } from "../helper/helperFunctions";
 import {
   setTodoToLocalStorage,
   getTodosFromLocalStorage,
+  deleteAllTodos,
+  createSavedTodosInLocalStorage,
 } from "../helper/localStorage";
 import ToDo from "./components/Todo";
 
@@ -38,6 +49,11 @@ const TodoFeed = () => {
       : setHighPriority("outlined");
   };
 
+  const handleAllTodosDelete = () => {
+    deleteAllTodos();
+    setTodoArray([]);
+  };
+
   useEffect(() => {
     const todosFromStorage = getTodosFromLocalStorage();
     const totalSortedArray = sortByStatusAndDate(todosFromStorage);
@@ -46,6 +62,12 @@ const TodoFeed = () => {
 
   return (
     <Box>
+      <Box className="delete-bar" width={"100vw"}>
+        {/* <IconButton onClick={handleAllTodosDelete}>
+          <DeleteForeverOutlinedIcon />
+        </IconButton> */}
+        <DeleteDialog handleAllTodosDelete={handleAllTodosDelete} />
+      </Box>
       <form onSubmit={handleTodoSubmit}>
         <Box
           className="form-inputs"
@@ -84,7 +106,7 @@ const TodoFeed = () => {
           </Box>
         </Box>
       </form>
-      <Box>
+      <Box textAlign={"center"}>
         {todoArray.length ? (
           todoArray.map((todo, index) => <ToDo key={index} todo={todo} />)
         ) : (
@@ -96,3 +118,52 @@ const TodoFeed = () => {
 };
 
 export default TodoFeed;
+
+const DeleteDialog = ({ handleAllTodosDelete }) => {
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handlePermanentDelete = () => {
+    handleAllTodosDelete();
+    setOpen(false);
+  };
+
+  const handleSaveAndDelete = () => {
+    createSavedTodosInLocalStorage();
+    handleAllTodosDelete();
+    setOpen(false);
+  };
+
+  return (
+    <div>
+      <IconButton onClick={handleClickOpen}>
+        <DeleteForeverOutlinedIcon />
+      </IconButton>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Delete All of Your ToDos?"}
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handlePermanentDelete}>
+            Permanently Delete Todos
+          </Button>
+          <Button onClick={handleSaveAndDelete} autoFocus>
+            Save Todos and Start New Feed
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};

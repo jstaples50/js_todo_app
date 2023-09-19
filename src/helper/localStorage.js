@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 export const setTodoToLocalStorage = (todo) => {
   const todoArray = getTodosFromLocalStorage();
   todoArray.length
@@ -47,4 +49,13 @@ export const deleteTodo = (todo) => {
   const todoArray = getTodosFromLocalStorage();
   const newTodoArray = todoArray.filter((t) => t.id !== todo.id);
   localStorage.setItem("Todos", JSON.stringify(newTodoArray));
+};
+
+export const deleteAllTodos = () => {
+  localStorage.removeItem("Todos");
+};
+
+export const createSavedTodosInLocalStorage = () => {
+  const todoArray = getTodosFromLocalStorage();
+  localStorage.setItem(`Todo-${uuidv4()}`, JSON.stringify(todoArray));
 };
