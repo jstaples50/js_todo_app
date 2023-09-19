@@ -32,17 +32,19 @@ const TodoFeed = () => {
 
   const handleTodoSubmit = (e) => {
     e.preventDefault();
-    const newTodo = {
-      id: uuidv4(),
-      date: new Date(),
-      text: todo,
-      highPriority: highPriority === "contained" ? true : false,
-      status: 1,
-    };
-    setTodoToLocalStorage(newTodo);
-    setTodo("");
-    setHighPriority("outlined");
-    childChange ? setChildChange(false) : setChildChange(true);
+    if (todo !== "") {
+      const newTodo = {
+        id: uuidv4(),
+        date: new Date(),
+        text: todo,
+        highPriority: highPriority === "contained" ? true : false,
+        status: 1,
+      };
+      setTodoToLocalStorage(newTodo);
+      setTodo("");
+      setHighPriority("outlined");
+      childChange ? setChildChange(false) : setChildChange(true);
+    } else return;
   };
 
   const handleHighPriorityClick = () => {
@@ -65,9 +67,6 @@ const TodoFeed = () => {
   return (
     <Box>
       <Box className="delete-bar" width={"100vw"}>
-        {/* <IconButton onClick={handleAllTodosDelete}>
-          <DeleteForeverOutlinedIcon />
-        </IconButton> */}
         <DeleteDialog handleAllTodosDelete={handleAllTodosDelete} />
       </Box>
       <form onSubmit={handleTodoSubmit}>
@@ -110,17 +109,45 @@ const TodoFeed = () => {
       </form>
       <Box textAlign={"center"}>
         {todoArray.length ? (
-          todoArray.map((todo, index) => (
-            <ToDo
-              key={index}
-              todo={todo}
-              childChange={childChange}
-              setChildChange={setChildChange}
-            />
-          ))
+          todoArray
+            .filter((t) => t.status === 0)
+            .map((todo, index) => (
+              <ToDo
+                key={index}
+                todo={todo}
+                childChange={childChange}
+                setChildChange={setChildChange}
+              />
+            ))
         ) : (
-          <Typography>No Todos Yet!</Typography>
+          <Typography mt={"10px"}>No Todos Yet!</Typography>
         )}
+        <Typography>-------------------------------------------</Typography>
+        {todoArray.length
+          ? todoArray
+              .filter((t) => t.status === 1)
+              .map((todo, index) => (
+                <ToDo
+                  key={index}
+                  todo={todo}
+                  childChange={childChange}
+                  setChildChange={setChildChange}
+                />
+              ))
+          : null}
+        <Typography>-------------------------------------------</Typography>
+        {todoArray.length
+          ? todoArray
+              .filter((t) => t.status === 2)
+              .map((todo, index) => (
+                <ToDo
+                  key={index}
+                  todo={todo}
+                  childChange={childChange}
+                  setChildChange={setChildChange}
+                />
+              ))
+          : null}
       </Box>
     </Box>
   );

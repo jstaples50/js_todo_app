@@ -106,9 +106,6 @@ const ToDo = ({ todo, childChange, setChildChange }) => {
       <Typography sx={{ m: "5px", fontWeight: "bold", color: grey[600] }}>
         {todo.text}
       </Typography>
-      {/* <Button variant="contained" onClick={() => setOpen(true)}>
-        Set Status
-      </Button> */}
       <StatusButton onClick={() => setOpen(true)} statusColor={borderColor}>
         Set Status
       </StatusButton>
