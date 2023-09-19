@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
-import { lightBlue, orange, green, grey } from "@mui/material/colors";
+import { lightBlue, orange, green, grey, purple } from "@mui/material/colors";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import {
@@ -56,15 +56,15 @@ const ToDo = ({ todo, childChange, setChildChange }) => {
   const handleBorderColor = (statusState) => {
     switch (statusState) {
       case 0:
-        setBorderColor(statusButtonOrange.main);
+        setBorderColor(statusButtonOrange);
         setBackgroundColor(orange[50]);
         break;
       case 1:
-        setBorderColor(statusButtonBlue.main);
+        setBorderColor(statusButtonBlue);
         setBackgroundColor(lightBlue[50]);
         break;
       case 2:
-        setBorderColor(statusButtonGreen.main);
+        setBorderColor(statusButtonGreen);
         setBackgroundColor(green[50]);
         break;
     }
@@ -78,7 +78,7 @@ const ToDo = ({ todo, childChange, setChildChange }) => {
     <Box
       m={"10px"}
       bgcolor={backgroundColor}
-      border={`solid 5px ${borderColor}`}
+      border={`solid 5px ${borderColor.main}`}
       borderRadius={"12px"}
       // textAlign={"center"}
       display={"flex"}
@@ -106,9 +106,12 @@ const ToDo = ({ todo, childChange, setChildChange }) => {
       <Typography sx={{ m: "5px", fontWeight: "bold", color: grey[600] }}>
         {todo.text}
       </Typography>
-      <Button variant="contained" onClick={() => setOpen(true)}>
+      {/* <Button variant="contained" onClick={() => setOpen(true)}>
         Set Status
-      </Button>
+      </Button> */}
+      <StatusButton onClick={() => setOpen(true)} statusColor={borderColor}>
+        Set Status
+      </StatusButton>
       <StatusDialog
         open={open}
         setOpen={setOpen}
@@ -118,6 +121,14 @@ const ToDo = ({ todo, childChange, setChildChange }) => {
     </Box>
   );
 };
+
+const StatusButton = styled(Button)(({ theme, statusColor }) => ({
+  color: theme.palette.getContrastText(purple[500]),
+  backgroundColor: statusColor.main,
+  "&:hover": {
+    backgroundColor: statusColor.dark,
+  },
+}));
 
 const StatusDialog = ({
   open,

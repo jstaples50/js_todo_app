@@ -42,15 +42,7 @@ const TodoFeed = () => {
     setTodoToLocalStorage(newTodo);
     setTodo("");
     setHighPriority("outlined");
-    // childChange ? setChildChange(false) : setChildChange(true);
-    // console.log(childChange);
-    if (childChange) {
-      setChildChange(false);
-      console.log("submit child change true");
-    } else {
-      setChildChange(true);
-      console.log("submit child change false");
-    }
+    childChange ? setChildChange(false) : setChildChange(true);
   };
 
   const handleHighPriorityClick = () => {
