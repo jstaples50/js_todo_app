@@ -4,7 +4,15 @@ import TodoFeed from "./scenes/TodoFeed";
 
 function App() {
   return (
-    <div className="App">
+    <div
+      className="App"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <CssBaseline />
       <h1>App Component</h1>
       <TodoFeed />
