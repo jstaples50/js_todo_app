@@ -7,6 +7,11 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
+  Select,
+  MenuItem,
+  Checkbox,
+  ListItemText,
+  OutlinedInput,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
@@ -19,11 +24,13 @@ import {
   createSavedTodosInLocalStorage,
 } from "../helper/localStorage";
 import ToDo from "./components/Todo";
+import { Check } from "@mui/icons-material";
 
-const TodoFeed = () => {
+const TodoFeed = ({ categoryArray, setCategoryArray }) => {
   const [todo, setTodo] = useState("");
   const [todoArray, setTodoArray] = useState([]);
   const [highPriority, setHighPriority] = useState("outlined");
+  const [categoriesSelected, setCategoriesSelected] = useState([]);
   const [childChange, setChildChange] = useState(false);
 
   const handleTodoChange = (e) => {
@@ -39,10 +46,12 @@ const TodoFeed = () => {
         text: todo,
         highPriority: highPriority === "contained" ? true : false,
         status: 1,
+        categories: categoriesSelected,
       };
       setTodoToLocalStorage(newTodo);
       setTodo("");
       setHighPriority("outlined");
+      setCategoriesSelected([]);
       childChange ? setChildChange(false) : setChildChange(true);
     } else return;
   };
@@ -56,6 +65,11 @@ const TodoFeed = () => {
   const handleAllTodosDelete = () => {
     deleteAllTodos();
     setTodoArray([]);
+  };
+
+  const handleCategorySelectionChange = (e) => {
+    setCategoriesSelected(e.target.value);
+    console.log(categoriesSelected);
   };
 
   useEffect(() => {
@@ -105,6 +119,33 @@ const TodoFeed = () => {
               High Priority
             </Button>
           </Box>
+          <Select
+            multiple
+            input={<OutlinedInput label="Tag" />}
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            placeholder="Select Category"
+            name="color"
+            value={categoriesSelected}
+            label="Categories"
+            onChange={handleCategorySelectionChange}
+            sx={{ minWidth: "120px", m: "15px" }}
+          >
+            {categoryArray.length &&
+              categoryArray.map((category) => (
+                <MenuItem key={category.title} value={category}>
+                  <Checkbox
+                    sx={{
+                      color: category.color.value[800],
+                      "&.Mui-checked": {
+                        color: category.color.value[600],
+                      },
+                    }}
+                  />
+                  <ListItemText primary={category.title} />
+                </MenuItem>
+              ))}
+          </Select>
         </Box>
       </form>
       <Box textAlign={"center"}>
@@ -148,6 +189,7 @@ const TodoFeed = () => {
                 />
               ))
           : null}
+        <Typography>-------------------------------------------</Typography>
       </Box>
     </Box>
   );

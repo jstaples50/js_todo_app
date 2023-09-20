@@ -59,3 +59,22 @@ export const createSavedTodosInLocalStorage = () => {
   const todoArray = getTodosFromLocalStorage();
   localStorage.setItem(`Todo-${uuidv4()}`, JSON.stringify(todoArray));
 };
+
+// CATEGORIES
+
+export const getCategoriesFromLocalStorage = () => {
+  const categoryArray = localStorage.getItem("Categories")
+    ? JSON.parse(localStorage.getItem("Categories"))
+    : [];
+  return categoryArray;
+};
+
+export const setCategoryToLocalStorage = (category) => {
+  const categoryArray = getCategoriesFromLocalStorage();
+  categoryArray.length
+    ? localStorage.setItem(
+        "Categories",
+        JSON.stringify([...categoryArray, category])
+      )
+    : localStorage.setItem("Categories", JSON.stringify([category]));
+};

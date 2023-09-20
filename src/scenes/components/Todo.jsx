@@ -7,6 +7,7 @@ import {
   Dialog,
   DialogTitle,
   IconButton,
+  Popover,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
@@ -91,6 +92,7 @@ const ToDo = ({ todo, childChange, setChildChange }) => {
         className="priority-delete"
         display={"flex"}
         justifyContent={"flex-start"}
+        alignItems={"center"}
         width={"100%"}
       >
         <IconButton onClick={handleTodoDelete}>
@@ -101,6 +103,27 @@ const ToDo = ({ todo, childChange, setChildChange }) => {
           <IconButton color="error" onClick={handleRemovePriorityClick}>
             <ErrorOutlineOutlinedIcon />
           </IconButton>
+        )}
+        {todo.categories.length ? (
+          todo.categories.map((c) => (
+            <Box>
+              <CategoryPopover Category={c} />
+            </Box>
+          ))
+        ) : (
+          <Box
+            width={"15px"}
+            height={"15px"}
+            borderRadius={"50%"}
+            ml={"12px"}
+            bgcolor={grey[500]}
+            sx={{
+              "&:hover": {
+                cursor: "pointer",
+                outline: `3px solid ${grey[800]}`,
+              },
+            }}
+          ></Box>
         )}
       </Box>
       <Typography sx={{ m: "5px", fontWeight: "bold", color: grey[600] }}>
@@ -181,5 +204,52 @@ const StatusDialog = ({
     </Dialog>
   );
 };
+
+function CategoryPopover({ Category }) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+  return (
+    <div>
+      <Box
+        width={"15px"}
+        height={"15px"}
+        borderRadius={"50%"}
+        ml={"12px"}
+        bgcolor={Category.color.value[500]}
+        sx={{
+          "&:hover": {
+            cursor: "pointer",
+            outline: `3px solid ${Category.color.value[800]}`,
+          },
+        }}
+        onClick={handleClick}
+      ></Box>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+        <Typography sx={{ p: 2 }}>{Category.title}</Typography>
+        <Button>Remove Category</Button>
+      </Popover>
+    </div>
+  );
+}
 
 export default ToDo;
