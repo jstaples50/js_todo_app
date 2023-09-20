@@ -14,13 +14,16 @@ import Button from "@mui/material/Button";
 import { lightBlue, orange, green, grey, purple } from "@mui/material/colors";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
+import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import {
   updateTodoStatus,
   updateTodoPriority,
+  updateTodoCategories,
   deleteTodo,
+  addTodoCategory,
 } from "../../helper/localStorage";
 
-const ToDo = ({ todo, childChange, setChildChange }) => {
+const ToDo = ({ todo, childChange, setChildChange, categoryArray }) => {
   const theme = useTheme();
   const statusButtonBlue = theme.palette.primary;
   const statusButtonOrange = theme.palette.warning;
@@ -81,7 +84,6 @@ const ToDo = ({ todo, childChange, setChildChange }) => {
       bgcolor={backgroundColor}
       border={`solid 5px ${borderColor.main}`}
       borderRadius={"12px"}
-      // textAlign={"center"}
       display={"flex"}
       flexDirection={"column"}
       alignItems={"center"}
@@ -95,36 +97,30 @@ const ToDo = ({ todo, childChange, setChildChange }) => {
         alignItems={"center"}
         width={"100%"}
       >
-        <IconButton onClick={handleTodoDelete}>
-          <HighlightOffOutlinedIcon />
-        </IconButton>
-        {/* just priority before */}
+        <DeleteTodo handleTodoDelete={handleTodoDelete} />
+        <AddCategory
+          childChange={childChange}
+          setChildChange={setChildChange}
+          categoryArray={categoryArray}
+          todo={todo}
+        />
         {todo.highPriority && (
-          <IconButton color="error" onClick={handleRemovePriorityClick}>
-            <ErrorOutlineOutlinedIcon />
-          </IconButton>
+          <DeleteHighPriority
+            handleRemovePriorityClick={handleRemovePriorityClick}
+          />
         )}
-        {todo.categories.length ? (
-          todo.categories.map((c) => (
-            <Box>
-              <CategoryPopover Category={c} />
-            </Box>
-          ))
-        ) : (
-          <Box
-            width={"15px"}
-            height={"15px"}
-            borderRadius={"50%"}
-            ml={"12px"}
-            bgcolor={grey[500]}
-            sx={{
-              "&:hover": {
-                cursor: "pointer",
-                outline: `3px solid ${grey[800]}`,
-              },
-            }}
-          ></Box>
-        )}
+        {todo.categories.length
+          ? todo.categories.map((c) => (
+              <Box>
+                <CategoryPopover
+                  Category={c}
+                  todo={todo}
+                  childChange={childChange}
+                  setChildChange={setChildChange}
+                />
+              </Box>
+            ))
+          : null}
       </Box>
       <Typography sx={{ m: "5px", fontWeight: "bold", color: grey[600] }}>
         {todo.text}
@@ -142,6 +138,8 @@ const ToDo = ({ todo, childChange, setChildChange }) => {
   );
 };
 
+// TODO ---------------------------------------------------
+
 const StatusButton = styled(Button)(({ theme, statusColor }) => ({
   color: theme.palette.getContrastText(purple[500]),
   backgroundColor: statusColor.main,
@@ -149,6 +147,8 @@ const StatusButton = styled(Button)(({ theme, statusColor }) => ({
     backgroundColor: statusColor.dark,
   },
 }));
+
+// STATUS BUTTON ---------------------------------------------------
 
 const StatusDialog = ({
   open,
@@ -205,7 +205,9 @@ const StatusDialog = ({
   );
 };
 
-function CategoryPopover({ Category }) {
+// STATUS DIALOG ---------------------------------------------------
+
+function CategoryPopover({ Category, todo, childChange, setChildChange }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -214,6 +216,12 @@ function CategoryPopover({ Category }) {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleCategoryDelete = () => {
+    updateTodoCategories(todo, Category);
+    setAnchorEl(null);
+    childChange ? setChildChange(false) : setChildChange(true);
   };
 
   const open = Boolean(anchorEl);
@@ -246,10 +254,243 @@ function CategoryPopover({ Category }) {
         }}
       >
         <Typography sx={{ p: 2 }}>{Category.title}</Typography>
-        <Button>Remove Category</Button>
+        <Button onClick={handleCategoryDelete}>Remove Category</Button>
       </Popover>
     </div>
   );
 }
+
+// CATEGORY POPOVER ---------------------------------------------------
+
+function DeleteTodo({ handleTodoDelete }) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  return (
+    <div>
+      <IconButton
+        onClick={handleTodoDelete}
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+      >
+        <HighlightOffOutlinedIcon />
+      </IconButton>
+      <Popover
+        id="mouse-over-popover"
+        sx={{
+          pointerEvents: "none",
+        }}
+        open={open}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <Typography sx={{ p: 1 }}>Delete Todo</Typography>
+      </Popover>
+    </div>
+  );
+}
+
+// DELETE TODO ---------------------------------------------------
+
+function DeleteHighPriority({ handleRemovePriorityClick }) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  return (
+    <div>
+      <IconButton
+        color="error"
+        onClick={handleRemovePriorityClick}
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+      >
+        <ErrorOutlineOutlinedIcon />
+      </IconButton>
+      <Popover
+        id="mouse-over-popover"
+        sx={{
+          pointerEvents: "none",
+        }}
+        open={open}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <Typography sx={{ p: 1 }}>Delete Priority</Typography>
+      </Popover>
+    </div>
+  );
+}
+
+// DELETE HIGH PRIORITY ---------------------------------------------------
+
+function AddCategory({ childChange, setChildChange, categoryArray, todo }) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [categoryOpen, setCategoryOpen] = useState(false);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  useEffect(() => {}, []);
+
+  const ColorDialog = () => {
+    const [selectedCategories, setSelectedCategories] = useState([]);
+
+    const handleClose = () => {
+      setCategoryOpen(false);
+      addTodoCategory(todo, selectedCategories);
+      childChange ? setChildChange(false) : setChildChange(true);
+    };
+
+    return (
+      <Dialog open={categoryOpen} onClose={handleClose} maxWidth={"xs"}>
+        <DialogTitle>Choose Categories to Add</DialogTitle>
+        <Box display={"flex"} justifyContent={"space-evenly"} flexWrap={"wrap"}>
+          {categoryArray &&
+            categoryArray.map((c) => (
+              <ColorOptionButton
+                category={c}
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+              />
+            ))}
+        </Box>
+      </Dialog>
+    );
+  };
+
+  const ColorOptionButton = ({
+    category,
+    selectedCategories,
+    setSelectedCategories,
+  }) => {
+    const [selected, setSelected] = useState(false);
+
+    const handleCategoryClick = () => {
+      if (!selected) {
+        setSelected(true);
+        setSelectedCategories((prev) => [...prev, category]);
+      } else {
+        setSelected(false);
+        const filteredCategories = selectedCategories.filter(
+          (c) => c.title !== category.title
+        );
+        setSelectedCategories(filteredCategories);
+      }
+    };
+
+    return (
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        m={"10px"}
+        textAlign={"center"}
+      >
+        <Typography>{category.title}</Typography>
+        <Box
+          width={"15px"}
+          height={"15px"}
+          borderRadius={"50%"}
+          mb={"12px"}
+          bgcolor={category.color.value[500]}
+          sx={
+            !selected
+              ? {
+                  "&:hover": {
+                    cursor: "pointer",
+                    outline: `3px solid ${category.color.value[800]}`,
+                  },
+                }
+              : {
+                  cursor: "pointer",
+                  outline: `3px solid ${category.color.value[800]}`,
+                }
+          }
+          onClick={handleCategoryClick}
+        ></Box>
+      </Box>
+    );
+  };
+
+  return (
+    <div>
+      <IconButton
+        onClick={() => setCategoryOpen(true)}
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+        style={{ color: green[500] }}
+      >
+        <AddCircleOutlineOutlinedIcon />
+      </IconButton>
+      <ColorDialog />
+      <Popover
+        id="mouse-over-popover"
+        sx={{
+          pointerEvents: "none",
+        }}
+        open={open}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <Typography sx={{ p: 1 }}>Add Category</Typography>
+      </Popover>
+    </div>
+  );
+}
+
+// ADD CATEGORY (Several smaller components inside) ---------------------------------------------------
 
 export default ToDo;

@@ -47,9 +47,9 @@ const CategoryFeed = ({ categoryArray, setCategoryArray }) => {
     });
   };
 
-  // useEffect(() => {
-  //   setCategoryArray(getCategoriesFromLocalStorage());
-  // }, []);
+  useEffect(() => {
+    setCategoryArray(getCategoriesFromLocalStorage());
+  }, [formInputs]);
 
   return (
     <Box>

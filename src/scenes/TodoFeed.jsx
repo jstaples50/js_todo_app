@@ -158,6 +158,7 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
                 todo={todo}
                 childChange={childChange}
                 setChildChange={setChildChange}
+                categoryArray={categoryArray}
               />
             ))
         ) : (
@@ -173,6 +174,7 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
                   todo={todo}
                   childChange={childChange}
                   setChildChange={setChildChange}
+                  categoryArray={categoryArray}
                 />
               ))
           : null}
@@ -186,6 +188,7 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
                   todo={todo}
                   childChange={childChange}
                   setChildChange={setChildChange}
+                  categoryArray={categoryArray}
                 />
               ))
           : null}

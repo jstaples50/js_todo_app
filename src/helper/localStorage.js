@@ -78,3 +78,30 @@ export const setCategoryToLocalStorage = (category) => {
       )
     : localStorage.setItem("Categories", JSON.stringify([category]));
 };
+
+export const updateTodoCategories = (todo, category) => {
+  const todoArray = getTodosFromLocalStorage();
+  const newTodoArray = todoArray.map((t) => {
+    if (t.id === todo.id) {
+      const filteredCategories = t.categories.filter(
+        (c) => c.title !== category.title
+      );
+      t.categories = filteredCategories;
+    }
+    return t;
+  });
+  localStorage.setItem("Todos", JSON.stringify(newTodoArray));
+};
+
+export const addTodoCategory = (todo, categoryArray) => {
+  const todoArray = getTodosFromLocalStorage();
+  const newTodoArray = todoArray.map((t) => {
+    if (t.id === todo.id && categoryArray.length) {
+      const oldCategories = t.categories;
+      const newCategories = oldCategories.concat(categoryArray);
+      t.categories = newCategories;
+    }
+    return t;
+  });
+  localStorage.setItem("Todos", JSON.stringify(newTodoArray));
+};
