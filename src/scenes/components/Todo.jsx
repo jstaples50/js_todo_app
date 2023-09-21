@@ -11,7 +11,14 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
-import { lightBlue, orange, green, grey, purple } from "@mui/material/colors";
+import {
+  lightBlue,
+  orange,
+  green,
+  grey,
+  purple,
+  red,
+} from "@mui/material/colors";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
@@ -281,6 +288,7 @@ function DeleteTodo({ handleTodoDelete }) {
         onClick={handleTodoDelete}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
+        sx={{ "&:hover": { color: red[500], bgcolor: red[50] } }}
       >
         <HighlightOffOutlinedIcon />
       </IconButton>
@@ -462,6 +470,7 @@ function AddCategory({ childChange, setChildChange, categoryArray, todo }) {
         onClick={() => setCategoryOpen(true)}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
+        sx={{ "&:hover": { bgcolor: green[200] } }}
         style={{ color: green[500] }}
       >
         <AddCircleOutlineOutlinedIcon />

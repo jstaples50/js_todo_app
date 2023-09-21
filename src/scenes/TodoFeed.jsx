@@ -12,9 +12,14 @@ import {
   Checkbox,
   ListItemText,
   OutlinedInput,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  Divider,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import { grey, red } from "@mui/material/colors";
 import { v4 as uuidv4 } from "uuid";
 import { sortByStatusAndDate } from "../helper/helperFunctions";
 import {
@@ -25,6 +30,17 @@ import {
 } from "../helper/localStorage";
 import ToDo from "./components/Todo";
 import { Check } from "@mui/icons-material";
+
+// const ITEM_HEIGHT = 48;
+// const ITEM_PADDING_TOP = 8;
+// const MenuProps = {
+//   PaperProps: {
+//     style: {
+//       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+//       width: 250,
+//     },
+//   },
+// };
 
 const TodoFeed = ({ categoryArray, setCategoryArray }) => {
   const [todo, setTodo] = useState("");
@@ -68,8 +84,14 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
   };
 
   const handleCategorySelectionChange = (e) => {
-    setCategoriesSelected(e.target.value);
-    console.log(categoriesSelected);
+    // setCategoriesSelected(e.target.value);
+    const {
+      target: { value },
+    } = e;
+    setCategoriesSelected(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    );
   };
 
   useEffect(() => {
@@ -90,7 +112,7 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
           flexDirection={"column"}
           justifyContent={"center"}
           alignItems={"center"}
-          // width={"400px"}
+          width={"100vw"}
         >
           <TextField
             id="filled-basic"
@@ -100,7 +122,18 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
             autoComplete="off"
             value={todo}
             onChange={handleTodoChange}
-            sx={{ m: "10px" }}
+            fullWidth
+            sx={{
+              width: "90%",
+              m: "10px auto",
+            }}
+            InputProps={{
+              sx: {
+                "& input": {
+                  textAlign: "center",
+                },
+              },
+            }}
           />
           <Box
             className="form-buttons"
@@ -119,36 +152,57 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
               High Priority
             </Button>
           </Box>
-          <Select
-            multiple
-            input={<OutlinedInput label="Tag" />}
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            placeholder="Select Category"
-            name="color"
-            value={categoriesSelected}
-            label="Categories"
-            onChange={handleCategorySelectionChange}
-            sx={{ minWidth: "120px", m: "15px" }}
-          >
-            {categoryArray.length &&
-              categoryArray.map((category) => (
-                <MenuItem key={category.title} value={category}>
-                  <Checkbox
-                    sx={{
-                      color: category.color.value[800],
-                      "&.Mui-checked": {
-                        color: category.color.value[600],
-                      },
-                    }}
-                  />
-                  <ListItemText primary={category.title} />
-                </MenuItem>
-              ))}
-          </Select>
+          <FormControl sx={{ m: 1, minWidth: 400 }}>
+            <InputLabel>Select Category</InputLabel>
+            <Select
+              multiple
+              autoWidth
+              input={<OutlinedInput label="Tag" />}
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              placeholder="Select Category"
+              name="color"
+              value={categoriesSelected}
+              label="Select Category"
+              onChange={handleCategorySelectionChange}
+              // renderValue={(selected) => selected.join(", ")}
+              // MenuProps={MenuProps}
+            >
+              {/* <MenuItem value="">
+                <em>None</em>
+              </MenuItem> */}
+              {categoryArray.length &&
+                categoryArray.map((category) => (
+                  <MenuItem key={category.title} value={category}>
+                    {/* <Checkbox
+                      sx={{
+                        color: category.color.value[800],
+                        "&.Mui-checked": {
+                          color: category.color.value[600],
+                        },
+                      }}
+                    /> */}
+                    <Box
+                      bgcolor={category.color.value[500]}
+                      width={"15px"}
+                      height={"15px"}
+                      borderRadius={"50%"}
+                      m={"12px"}
+                    ></Box>
+                    <ListItemText primary={category.title} />
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
         </Box>
       </form>
-      <Box textAlign={"center"}>
+      <Box
+        textAlign={"center"}
+        display={"flex"}
+        flexDirection={"column"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
         {todoArray.length ? (
           todoArray
             .filter((t) => t.status === 0)
@@ -164,7 +218,9 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
         ) : (
           <Typography mt={"10px"}>No Todos Yet!</Typography>
         )}
-        <Typography>-------------------------------------------</Typography>
+        <Divider
+          sx={{ bgcolor: grey[400], width: "95vw", borderBottomWidth: 4, m: 2 }}
+        ></Divider>
         {todoArray.length
           ? todoArray
               .filter((t) => t.status === 1)
@@ -178,7 +234,9 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
                 />
               ))
           : null}
-        <Typography>-------------------------------------------</Typography>
+        <Divider
+          sx={{ bgcolor: grey[400], width: "95vw", borderBottomWidth: 4, m: 2 }}
+        ></Divider>
         {todoArray.length
           ? todoArray
               .filter((t) => t.status === 2)
@@ -192,7 +250,14 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
                 />
               ))
           : null}
-        <Typography>-------------------------------------------</Typography>
+        <Divider
+          sx={{
+            bgcolor: grey[400],
+            width: "95vw",
+            borderBottomWidth: 4,
+            m: 2,
+          }}
+        ></Divider>
       </Box>
     </Box>
   );
@@ -224,7 +289,10 @@ const DeleteDialog = ({ handleAllTodosDelete }) => {
 
   return (
     <div>
-      <IconButton onClick={handleClickOpen}>
+      <IconButton
+        onClick={handleClickOpen}
+        sx={{ "&:hover": { color: red[500], bgcolor: red[50] } }}
+      >
         <DeleteForeverOutlinedIcon />
       </IconButton>
       <Dialog
