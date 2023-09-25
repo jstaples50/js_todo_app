@@ -4,12 +4,20 @@ import TodoFeed from "./scenes/TodoFeed";
 import { useState, useEffect } from "react";
 
 import { getCategoriesFromLocalStorage } from "./helper/localStorage";
+import { getAllCategoryStrings } from "./helper/helperFunctions";
 
 function App() {
   const [categoryArray, setCategoryArray] = useState([]);
+  const [categoriesToShow, setCategoriesToShow] = useState(categoryArray);
+  const [categoriesDataSets, setCategoriesDataSets] = useState([]);
+  const [childChange, setChildChange] = useState(false);
 
   useEffect(() => {
     setCategoryArray(getCategoriesFromLocalStorage());
+    setCategoriesToShow(getCategoriesFromLocalStorage());
+    setCategoriesDataSets(
+      getAllCategoryStrings(getCategoriesFromLocalStorage())
+    );
   }, []);
 
   return (
@@ -27,10 +35,21 @@ function App() {
       <TodoFeed
         categoryArray={categoryArray}
         setCategoryArray={setCategoryArray}
+        categoriesToShow={categoriesToShow}
+        childChange={childChange}
+        setChildChange={setChildChange}
+        categoriesDataSets={categoriesDataSets}
+        setCategoriesDataSets={setCategoriesDataSets}
       />
       <CategoryFeed
         categoryArray={categoryArray}
         setCategoryArray={setCategoryArray}
+        categoriesToShow={categoriesToShow}
+        setCategoriesToShow={setCategoriesToShow}
+        childChange={childChange}
+        setChildChange={setChildChange}
+        categoriesDataSets={categoriesDataSets}
+        setCategoriesDataSets={setCategoriesDataSets}
       />
     </div>
   );

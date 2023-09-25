@@ -15,6 +15,8 @@ import {
   Switch,
 } from "@mui/material";
 
+import CategorySelector from "./components/CategorySelector";
+
 import { colors } from "../helper/theme";
 import { grey } from "@mui/material/colors";
 
@@ -23,9 +25,17 @@ import {
   getCategoriesFromLocalStorage,
 } from "../helper/localStorage";
 
-const CategoryFeed = ({ categoryArray, setCategoryArray }) => {
+const CategoryFeed = ({
+  categoryArray,
+  setCategoryArray,
+  categoriesToShow,
+  setCategoriesToShow,
+  childChange,
+  setChildChange,
+  categoriesDataSets,
+  setCategoriesDataSets,
+}) => {
   const [formInputs, setFormInputs] = useState({ title: "", color: "" });
-  // const [categoryArray, setCategoryArray] = useState([]);
 
   const createCategory = (formInputs) => {
     const category = {
@@ -122,193 +132,17 @@ const CategoryFeed = ({ categoryArray, setCategoryArray }) => {
             </Box>
           ))}
       </Box> */}
-      <CategorySelector categoryArray={categoryArray} />
+      <CategorySelector
+        categoryArray={categoryArray}
+        categoriesToShow={categoriesToShow}
+        setCategoriesToShow={setCategoriesToShow}
+        childChange={childChange}
+        setChildChange={setChildChange}
+        categoriesDataSets={categoriesDataSets}
+        setCategoriesDataSets={setCategoriesDataSets}
+      />
     </Box>
   );
 };
 
 export default CategoryFeed;
-
-const CategorySelector = ({ categoryArray }) => {
-  const [categoriesToShow, setCategoriesToShow] = useState(categoryArray);
-
-  const CategorySwitch = ({ category }) => {
-    // const [checked, setChecked] = useState(true);
-
-    const handleCategorySwitchChange = (e) => {
-      // setChecked(e.target.checked);
-      // if (checked && !categoriesToShow.includes(category)) {
-      //   setCategoriesToShow((prev) => [...prev, category]);
-      // } else {
-      //   const filteredCategories = categoriesToShow.filter(
-      //     (c) => c.title !== category.title
-      //   );
-      //   setCategoriesToShow(filteredCategories);
-      // }
-
-      if (!categoriesToShow.includes(category)) {
-        setCategoriesToShow((prev) => [...prev, category]);
-      } else {
-        const filteredCategories = categoriesToShow.filter(
-          (c) => c.title !== category.title
-        );
-        setCategoriesToShow(filteredCategories);
-      }
-    };
-
-    const [selected, setSelected] = React.useState(false);
-
-    const handleChange = (event) => {
-      // if (!categoriesToShow.includes(category)) {
-      //   setCategoriesToShow((prev) => [...prev, category]);
-      // } else {
-      //   const filteredCategories = categoriesToShow.filter(
-      //     (c) => c.title !== category.title
-      //   );
-      //   setCategoriesToShow(filteredCategories);
-      // }
-      // setChecked(event.target.checked);
-      // setCategoriesToShow("test");
-      // console.log(categoriesToShow);
-      // categoriesToShow.includes(category)
-      //   ? setCategoriesToShow((prev) =>
-      //       prev.filter((c) => c.title !== category.title)
-      //     )
-      //   : setCategoriesToShow((prev) => [...prev, category]);
-    };
-
-    // useEffect(() => {
-    //   categoriesToShow.includes(category)
-    //     ? setCategoriesToShow((prev) =>
-    //         prev.filter((c) => c.title !== category.title)
-    //       )
-    //     : setCategoriesToShow((prev) => [...prev, category]);
-    // }, []);
-
-    const handleClick = () => {
-      if (!categoriesToShow.includes(category) && !selected) {
-        setCategoriesToShow((prev) => [...prev, category]);
-        setSelected(true);
-        console.log("check 1");
-      } else {
-        const filteredCategories = categoriesToShow.filter(
-          (c) => c.title !== category.title
-        );
-        setCategoriesToShow(filteredCategories);
-        setSelected(false);
-        console.log("check 2");
-      }
-    };
-
-    const handleCategoryClick = () => {
-      if (!selected) {
-        setSelected(true);
-        setCategoriesToShow((prev) => [...prev, category]);
-      } else {
-        setSelected(false);
-        const filteredCategories = categoriesToShow.filter(
-          (c) => c.title !== category.title
-        );
-        setCategoriesToShow(filteredCategories);
-      }
-    };
-
-    return (
-      // <FormControlLabel
-      //   control={
-      //     <Switch
-      //       defaultChecked
-      //       value={category}
-      //       sx={{
-      //         "&.MuiSwitch-root .MuiSwitch-switchBase": {
-      //           color: "red",
-      //         },
-
-      //         "&.MuiSwitch-root .Mui-checked": {
-      //           color: category.color.value[500],
-      //         },
-      //         "&.MuiSwitch-root .MuiSwitch-track": {
-      //           backgroundColor: category.color.value[300],
-      //         },
-      //       }}
-      //     />
-      //   }
-      //   label={category.title}
-      // />
-
-      // <MenuItem key={category.title} value={category}>
-      //   <Checkbox
-      //     sx={{
-      //       color: category.color.value[800],
-      //       "&.Mui-checked": {
-      //         color: category.color.value[600],
-      //       },
-      //     }}
-      //     onClick={handleChange}
-      //     checked={checked}
-      //   />
-      //   <ListItemText primary={category.title} />
-      // </MenuItem>
-      <Box
-        width={"15px"}
-        height={"15px"}
-        borderRadius={"50%"}
-        mb={"12px"}
-        bgcolor={category.color.value[500]}
-        sx={
-          !selected
-            ? {
-                "&:hover": {
-                  cursor: "pointer",
-                  outline: `3px solid ${category.color.value[800]}`,
-                },
-              }
-            : {
-                cursor: "pointer",
-                outline: `3px solid ${category.color.value[800]}`,
-              }
-        }
-        onClick={handleClick}
-      ></Box>
-    );
-  };
-
-  useEffect(() => {
-    console.log(categoriesToShow);
-  }, []);
-
-  return (
-    <Box className="category-selector">
-      {categoryArray.length
-        ? categoryArray.map((c) => (
-            // <FormControlLabel
-            //   key={c.title}
-            //   control={
-            //     <Switch
-            //       defaultChecked
-            //       value={c}
-            //       sx={{
-            //         "&.MuiSwitch-root .MuiSwitch-switchBase": {
-            //           color: "red",
-            //         },
-
-            //         "&.MuiSwitch-root .Mui-checked": {
-            //           color: c.color.value[500],
-            //         },
-            //         "&.MuiSwitch-root .MuiSwitch-track": {
-            //           backgroundColor: c.color.value[300],
-            //         },
-            //       }}
-            //     />
-            //   }
-            //   label={c.title}
-            // />
-            <CategorySwitch key={c.title} category={c} />
-          ))
-        : null}
-
-      {categoriesToShow &&
-        categoriesToShow.map((c) => <Typography>{c.title}</Typography>)}
-    </Box>
-  );
-};

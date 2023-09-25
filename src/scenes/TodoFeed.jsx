@@ -42,12 +42,19 @@ import { Check } from "@mui/icons-material";
 //   },
 // };
 
-const TodoFeed = ({ categoryArray, setCategoryArray }) => {
+const TodoFeed = ({
+  categoryArray,
+  setCategoryArray,
+  categoriesToShow,
+  childChange,
+  setChildChange,
+  categoriesDataSets,
+  setCategoriesDataSets,
+}) => {
   const [todo, setTodo] = useState("");
   const [todoArray, setTodoArray] = useState([]);
   const [highPriority, setHighPriority] = useState("outlined");
   const [categoriesSelected, setCategoriesSelected] = useState([]);
-  const [childChange, setChildChange] = useState(false);
 
   const handleTodoChange = (e) => {
     setTodo(e.target.value);
@@ -92,6 +99,19 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
       // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
+  };
+
+  const filterCategoryStrings = (todo, categoriesDataSets) => {
+    const categoryStringArray = [];
+    todo.categories.map((c) => categoryStringArray.push(c.title));
+    let isCategory = false;
+    categoriesDataSets.forEach((c) => {
+      if (categoryStringArray.includes(c)) {
+        isCategory = true;
+      }
+    });
+    console.log(isCategory);
+    return isCategory;
   };
 
   useEffect(() => {
@@ -205,7 +225,10 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
       >
         {todoArray.length ? (
           todoArray
-            .filter((t) => t.status === 0)
+            .filter(
+              (t) =>
+                t.status === 0 && filterCategoryStrings(t, categoriesDataSets)
+            )
             .map((todo, index) => (
               <ToDo
                 key={index}
@@ -223,7 +246,10 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
         ></Divider>
         {todoArray.length
           ? todoArray
-              .filter((t) => t.status === 1)
+              .filter(
+                (t) =>
+                  t.status === 1 && filterCategoryStrings(t, categoriesDataSets)
+              )
               .map((todo, index) => (
                 <ToDo
                   key={index}
@@ -239,7 +265,10 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
         ></Divider>
         {todoArray.length
           ? todoArray
-              .filter((t) => t.status === 2)
+              .filter(
+                (t) =>
+                  t.status === 2 && filterCategoryStrings(t, categoriesDataSets)
+              )
               .map((todo, index) => (
                 <ToDo
                   key={index}
