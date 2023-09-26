@@ -34,3 +34,7 @@ export const sortByStatusAndDate = (arr) => {
   });
   return allArrays.flat();
 };
+
+export const getAllCategoryStrings = (categoriesToShow) => {
+  return categoriesToShow.map((c) => c.title);
+};

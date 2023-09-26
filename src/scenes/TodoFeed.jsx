@@ -19,7 +19,8 @@ import {
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
-import { grey, red } from "@mui/material/colors";
+import RestoreIcon from "@mui/icons-material/Restore";
+import { grey, red, green } from "@mui/material/colors";
 import { v4 as uuidv4 } from "uuid";
 import { sortByStatusAndDate } from "../helper/helperFunctions";
 import {
@@ -27,9 +28,9 @@ import {
   getTodosFromLocalStorage,
   deleteAllTodos,
   createSavedTodosInLocalStorage,
+  getAndSaveTodoListFromLocalStorage,
 } from "../helper/localStorage";
 import ToDo from "./components/Todo";
-import { Check } from "@mui/icons-material";
 
 // const ITEM_HEIGHT = 48;
 // const ITEM_PADDING_TOP = 8;
@@ -42,12 +43,19 @@ import { Check } from "@mui/icons-material";
 //   },
 // };
 
-const TodoFeed = ({ categoryArray, setCategoryArray }) => {
+const TodoFeed = ({
+  categoryArray,
+  setCategoryArray,
+  categoriesToShow,
+  childChange,
+  setChildChange,
+  categoriesDataSets,
+  setCategoriesDataSets,
+}) => {
   const [todo, setTodo] = useState("");
   const [todoArray, setTodoArray] = useState([]);
   const [highPriority, setHighPriority] = useState("outlined");
   const [categoriesSelected, setCategoriesSelected] = useState([]);
-  const [childChange, setChildChange] = useState(false);
 
   const handleTodoChange = (e) => {
     setTodo(e.target.value);
@@ -94,6 +102,18 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
     );
   };
 
+  const filterCategoryStrings = (todo, categoriesDataSets) => {
+    const categoryStringArray = [];
+    todo.categories.map((c) => categoryStringArray.push(c.title));
+    let isCategory = false;
+    categoriesDataSets.forEach((c) => {
+      if (categoryStringArray.includes(c)) {
+        isCategory = true;
+      }
+    });
+    return isCategory;
+  };
+
   useEffect(() => {
     const todosFromStorage = getTodosFromLocalStorage();
     const totalSortedArray = sortByStatusAndDate(todosFromStorage);
@@ -102,8 +122,18 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
 
   return (
     <Box>
-      <Box className="delete-bar" width={"100vw"}>
+      <Box
+        className="delete-bar"
+        width={"100vw"}
+        display={"flex"}
+        justifyContent={"flex-start"}
+        alignItems={"center"}
+      >
         <DeleteDialog handleAllTodosDelete={handleAllTodosDelete} />
+        <RestoreDialog
+          childChange={childChange}
+          setChildChange={setChildChange}
+        />
       </Box>
       <form onSubmit={handleTodoSubmit}>
         <Box
@@ -205,7 +235,10 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
       >
         {todoArray.length ? (
           todoArray
-            .filter((t) => t.status === 0)
+            .filter(
+              (t) =>
+                t.status === 0 && filterCategoryStrings(t, categoriesDataSets)
+            )
             .map((todo, index) => (
               <ToDo
                 key={index}
@@ -223,7 +256,10 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
         ></Divider>
         {todoArray.length
           ? todoArray
-              .filter((t) => t.status === 1)
+              .filter(
+                (t) =>
+                  t.status === 1 && filterCategoryStrings(t, categoriesDataSets)
+              )
               .map((todo, index) => (
                 <ToDo
                   key={index}
@@ -239,7 +275,10 @@ const TodoFeed = ({ categoryArray, setCategoryArray }) => {
         ></Divider>
         {todoArray.length
           ? todoArray
-              .filter((t) => t.status === 2)
+              .filter(
+                (t) =>
+                  t.status === 2 && filterCategoryStrings(t, categoriesDataSets)
+              )
               .map((todo, index) => (
                 <ToDo
                   key={index}
@@ -281,6 +320,7 @@ const DeleteDialog = ({ handleAllTodosDelete }) => {
     setOpen(false);
   };
 
+  // !!!!!!!!
   const handleSaveAndDelete = () => {
     createSavedTodosInLocalStorage();
     handleAllTodosDelete();
@@ -291,7 +331,7 @@ const DeleteDialog = ({ handleAllTodosDelete }) => {
     <div>
       <IconButton
         onClick={handleClickOpen}
-        sx={{ "&:hover": { color: red[500], bgcolor: red[50] } }}
+        sx={{ "&:hover": { color: red[500], bgcolor: red[50] }, m: "12px" }}
       >
         <DeleteForeverOutlinedIcon />
       </IconButton>
@@ -311,6 +351,85 @@ const DeleteDialog = ({ handleAllTodosDelete }) => {
           <Button onClick={handleSaveAndDelete} autoFocus>
             Save Todos and Start New Feed
           </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};
+
+const RestoreDialog = ({ childChange, setChildChange }) => {
+  const [open, setOpen] = useState(false);
+  const [todoList, setTodoList] = useState("");
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleTodoListChange = (e) => {
+    setTodoList(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (todoList !== "") {
+      getAndSaveTodoListFromLocalStorage(todoList);
+      setOpen(false);
+      childChange ? setChildChange(false) : setChildChange(true);
+    } else return;
+  };
+
+  return (
+    <div>
+      <IconButton
+        onClick={handleClickOpen}
+        sx={{
+          "&:hover": { color: green[500], bgcolor: green[50] },
+          color: green[500],
+          m: "12px",
+        }}
+      >
+        <RestoreIcon />
+      </IconButton>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Restore Your ToDo's?"}
+        </DialogTitle>
+        <DialogActions>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              id="filled-basic"
+              label="Enter Todo Here"
+              placeholder="Enter Todo List Name"
+              variant="filled"
+              autoComplete="off"
+              value={todoList}
+              onChange={handleTodoListChange}
+              fullWidth
+              sx={{
+                width: "90%",
+                m: "10px auto",
+              }}
+              InputProps={{
+                sx: {
+                  "& input": {
+                    textAlign: "center",
+                  },
+                },
+              }}
+            />
+            <Box className="restore-todo">
+              <Button onClick={handleSubmit}>Restore ToDo List</Button>
+            </Box>
+          </form>
         </DialogActions>
       </Dialog>
     </div>

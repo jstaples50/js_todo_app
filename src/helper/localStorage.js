@@ -14,6 +14,15 @@ export const getTodosFromLocalStorage = () => {
   return todoArray;
 };
 
+// Get saved Todos under saved name
+
+export const getAndSaveTodoListFromLocalStorage = (listName) => {
+  const savedTodoList = localStorage.getItem(listName)
+    ? JSON.parse(localStorage.getItem(listName))
+    : [];
+  localStorage.setItem("Todos", JSON.stringify([...savedTodoList]));
+};
+
 export const updateTodoStatus = (todo, newStatus) => {
   const todoArray = getTodosFromLocalStorage();
   const newTodoArray = todoArray.filter((t) => t.id !== todo.id);
