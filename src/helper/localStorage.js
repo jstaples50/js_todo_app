@@ -64,9 +64,9 @@ export const deleteAllTodos = () => {
   localStorage.removeItem("Todos");
 };
 
-export const createSavedTodosInLocalStorage = () => {
+export const createSavedTodosInLocalStorage = (listName) => {
   const todoArray = getTodosFromLocalStorage();
-  localStorage.setItem(`Todo-${uuidv4()}`, JSON.stringify(todoArray));
+  localStorage.setItem(listName, JSON.stringify(todoArray));
 };
 
 // CATEGORIES

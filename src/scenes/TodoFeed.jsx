@@ -20,7 +20,8 @@ import {
 import Button from "@mui/material/Button";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import RestoreIcon from "@mui/icons-material/Restore";
-import { grey, red, green } from "@mui/material/colors";
+import SaveIcon from "@mui/icons-material/Save";
+import { grey, red, green, lightBlue } from "@mui/material/colors";
 import { v4 as uuidv4 } from "uuid";
 import { sortByStatusAndDate } from "../helper/helperFunctions";
 import {
@@ -31,17 +32,6 @@ import {
   getAndSaveTodoListFromLocalStorage,
 } from "../helper/localStorage";
 import ToDo from "./components/Todo";
-
-// const ITEM_HEIGHT = 48;
-// const ITEM_PADDING_TOP = 8;
-// const MenuProps = {
-//   PaperProps: {
-//     style: {
-//       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-//       width: 250,
-//     },
-//   },
-// };
 
 const TodoFeed = ({
   categoryArray,
@@ -130,6 +120,7 @@ const TodoFeed = ({
         alignItems={"center"}
       >
         <DeleteDialog handleAllTodosDelete={handleAllTodosDelete} />
+        <SaveDialog handleAllTodosDelete={handleAllTodosDelete} />
         <RestoreDialog
           childChange={childChange}
           setChildChange={setChildChange}
@@ -320,18 +311,15 @@ const DeleteDialog = ({ handleAllTodosDelete }) => {
     setOpen(false);
   };
 
-  // !!!!!!!!
-  const handleSaveAndDelete = () => {
-    createSavedTodosInLocalStorage();
-    handleAllTodosDelete();
-    setOpen(false);
-  };
-
   return (
     <div>
       <IconButton
         onClick={handleClickOpen}
-        sx={{ "&:hover": { color: red[500], bgcolor: red[50] }, m: "12px" }}
+        sx={{
+          "&:hover": { color: red[500], bgcolor: red[50] },
+          m: "12px",
+          color: red[500],
+        }}
       >
         <DeleteForeverOutlinedIcon />
       </IconButton>
@@ -348,10 +336,90 @@ const DeleteDialog = ({ handleAllTodosDelete }) => {
           <Button onClick={handlePermanentDelete}>
             Permanently Delete Todos
           </Button>
-          <Button onClick={handleSaveAndDelete} autoFocus>
-            Save Todos and Start New Feed
-          </Button>
         </DialogActions>
+      </Dialog>
+    </div>
+  );
+};
+
+const SaveDialog = ({ handleAllTodosDelete }) => {
+  const [open, setOpen] = useState(false);
+  const [namedTodoList, setNamedTodoList] = useState("");
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleListNameChange = (e) => {
+    setNamedTodoList(e.target.value);
+  };
+
+  // !!!!!!!!
+  const handleSaveAndDelete = () => {
+    createSavedTodosInLocalStorage(namedTodoList);
+    handleAllTodosDelete();
+    setNamedTodoList("");
+    setOpen(false);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleSaveAndDelete();
+  };
+
+  return (
+    <div>
+      <IconButton
+        onClick={handleClickOpen}
+        sx={{
+          "&:hover": { color: lightBlue[500], bgcolor: lightBlue[50] },
+          m: "12px",
+          color: lightBlue[500],
+        }}
+      >
+        <SaveIcon />
+      </IconButton>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Save Your Todo List?"}
+        </DialogTitle>
+        <form onSubmit={handleSubmit}>
+          <DialogActions>
+            <TextField
+              id="filled-basic"
+              label="Enter List Name"
+              placeholder="Enter List Name"
+              variant="filled"
+              autoComplete="off"
+              value={namedTodoList}
+              onChange={handleListNameChange}
+              fullWidth
+              sx={{
+                width: "90%",
+                m: "10px auto",
+              }}
+              InputProps={{
+                sx: {
+                  "& input": {
+                    textAlign: "center",
+                  },
+                },
+              }}
+            />
+            <Button onClick={handleSaveAndDelete} autoFocus>
+              Save Todos and Start New Feed
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </div>
   );
