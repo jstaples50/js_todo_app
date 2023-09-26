@@ -19,7 +19,8 @@ import {
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
-import { grey, red } from "@mui/material/colors";
+import RestoreIcon from "@mui/icons-material/Restore";
+import { grey, red, green } from "@mui/material/colors";
 import { v4 as uuidv4 } from "uuid";
 import { sortByStatusAndDate } from "../helper/helperFunctions";
 import {
@@ -27,9 +28,9 @@ import {
   getTodosFromLocalStorage,
   deleteAllTodos,
   createSavedTodosInLocalStorage,
+  getAndSaveTodoListFromLocalStorage,
 } from "../helper/localStorage";
 import ToDo from "./components/Todo";
-import { Check } from "@mui/icons-material";
 
 // const ITEM_HEIGHT = 48;
 // const ITEM_PADDING_TOP = 8;
@@ -110,7 +111,6 @@ const TodoFeed = ({
         isCategory = true;
       }
     });
-    console.log(isCategory);
     return isCategory;
   };
 
@@ -122,8 +122,18 @@ const TodoFeed = ({
 
   return (
     <Box>
-      <Box className="delete-bar" width={"100vw"}>
+      <Box
+        className="delete-bar"
+        width={"100vw"}
+        display={"flex"}
+        justifyContent={"flex-start"}
+        alignItems={"center"}
+      >
         <DeleteDialog handleAllTodosDelete={handleAllTodosDelete} />
+        <RestoreDialog
+          childChange={childChange}
+          setChildChange={setChildChange}
+        />
       </Box>
       <form onSubmit={handleTodoSubmit}>
         <Box
@@ -310,6 +320,7 @@ const DeleteDialog = ({ handleAllTodosDelete }) => {
     setOpen(false);
   };
 
+  // !!!!!!!!
   const handleSaveAndDelete = () => {
     createSavedTodosInLocalStorage();
     handleAllTodosDelete();
@@ -320,7 +331,7 @@ const DeleteDialog = ({ handleAllTodosDelete }) => {
     <div>
       <IconButton
         onClick={handleClickOpen}
-        sx={{ "&:hover": { color: red[500], bgcolor: red[50] } }}
+        sx={{ "&:hover": { color: red[500], bgcolor: red[50] }, m: "12px" }}
       >
         <DeleteForeverOutlinedIcon />
       </IconButton>
@@ -340,6 +351,85 @@ const DeleteDialog = ({ handleAllTodosDelete }) => {
           <Button onClick={handleSaveAndDelete} autoFocus>
             Save Todos and Start New Feed
           </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};
+
+const RestoreDialog = ({ childChange, setChildChange }) => {
+  const [open, setOpen] = useState(false);
+  const [todoList, setTodoList] = useState("");
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleTodoListChange = (e) => {
+    setTodoList(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (todoList !== "") {
+      getAndSaveTodoListFromLocalStorage(todoList);
+      setOpen(false);
+      childChange ? setChildChange(false) : setChildChange(true);
+    } else return;
+  };
+
+  return (
+    <div>
+      <IconButton
+        onClick={handleClickOpen}
+        sx={{
+          "&:hover": { color: green[500], bgcolor: green[50] },
+          color: green[500],
+          m: "12px",
+        }}
+      >
+        <RestoreIcon />
+      </IconButton>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Restore Your ToDo's?"}
+        </DialogTitle>
+        <DialogActions>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              id="filled-basic"
+              label="Enter Todo Here"
+              placeholder="Enter Todo List Name"
+              variant="filled"
+              autoComplete="off"
+              value={todoList}
+              onChange={handleTodoListChange}
+              fullWidth
+              sx={{
+                width: "90%",
+                m: "10px auto",
+              }}
+              InputProps={{
+                sx: {
+                  "& input": {
+                    textAlign: "center",
+                  },
+                },
+              }}
+            />
+            <Box className="restore-todo">
+              <Button onClick={handleSubmit}>Restore ToDo List</Button>
+            </Box>
+          </form>
         </DialogActions>
       </Dialog>
     </div>

@@ -113,6 +113,8 @@ const CategoryFeed = ({
         <Box
           width={"100px"}
           height={"100px"}
+          borderRadius={"50%"}
+          m={"12px"}
           bgcolor={formInputs.color ? formInputs.color.value[500] : grey[500]}
         ></Box>
         <Typography>{formInputs.color.name}</Typography>
