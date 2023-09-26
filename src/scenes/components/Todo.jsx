@@ -6,6 +6,8 @@ import {
   useTheme,
   Dialog,
   DialogTitle,
+  DialogActions,
+  TextField,
   IconButton,
   Popover,
 } from "@mui/material";
@@ -18,16 +20,19 @@ import {
   grey,
   purple,
   red,
+  yellow,
 } from "@mui/material/colors";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   updateTodoStatus,
   updateTodoPriority,
   updateTodoCategories,
   deleteTodo,
   addTodoCategory,
+  updateTodoText,
 } from "../../helper/localStorage";
 
 const ToDo = ({ todo, childChange, setChildChange, categoryArray }) => {
@@ -110,6 +115,11 @@ const ToDo = ({ todo, childChange, setChildChange, categoryArray }) => {
           setChildChange={setChildChange}
           categoryArray={categoryArray}
           todo={todo}
+        />
+        <EditTodo
+          todo={todo}
+          childChange={childChange}
+          setChildChange={setChildChange}
         />
         {todo.highPriority && (
           <DeleteHighPriority
@@ -501,5 +511,114 @@ function AddCategory({ childChange, setChildChange, categoryArray, todo }) {
 }
 
 // ADD CATEGORY (Several smaller components inside) ---------------------------------------------------
+
+const EditTodo = ({ todo, childChange, setChildChange }) => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [todoText, setTodoText] = useState(todo.text);
+
+  const open = Boolean(anchorEl);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleTodoTextChange = (e) => {
+    setTodoText(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateTodoText(todo, todoText);
+    setDialogOpen(false);
+    childChange ? setChildChange(false) : setChildChange(true);
+  };
+
+  useEffect(() => {
+    setTodoText(todo.text);
+  }, []);
+
+  return (
+    <div>
+      <IconButton
+        onClick={handleDialogOpen}
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+        sx={{ "&:hover": { bgcolor: yellow[200], color: orange[700] } }}
+        // style={{ color: yellow[500] }}
+      >
+        <EditIcon />
+      </IconButton>
+      <Popover
+        id="mouse-over-popover"
+        sx={{
+          pointerEvents: "none",
+        }}
+        open={open}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <Typography sx={{ p: 1 }}>Edit Todo</Typography>
+      </Popover>
+      <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Edit Todo"}</DialogTitle>
+        <form onSubmit={handleSubmit}>
+          <DialogActions>
+            <TextField
+              id="filled-basic"
+              label="New Text"
+              placeholder={todoText}
+              variant="filled"
+              autoComplete="off"
+              value={todoText}
+              onChange={handleTodoTextChange}
+              fullWidth
+              sx={{
+                width: "90%",
+                m: "10px auto",
+              }}
+              InputProps={{
+                sx: {
+                  "& input": {
+                    textAlign: "center",
+                  },
+                },
+              }}
+            />
+            <Button onClick={handleSubmit} autoFocus>
+              Submit
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+    </div>
+  );
+};
 
 export default ToDo;

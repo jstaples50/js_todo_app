@@ -69,6 +69,21 @@ export const createSavedTodosInLocalStorage = (listName) => {
   localStorage.setItem(listName, JSON.stringify(todoArray));
 };
 
+export const updateTodoText = (todo, text) => {
+  const todoArray = getTodosFromLocalStorage();
+  const newTodoArray = todoArray.map((t) => {
+    if (t.id === todo.id) {
+      return {
+        ...t,
+        text: text,
+      };
+    } else {
+      return t;
+    }
+  });
+  localStorage.setItem("Todos", JSON.stringify(newTodoArray));
+};
+
 // CATEGORIES
 
 export const getCategoriesFromLocalStorage = () => {
