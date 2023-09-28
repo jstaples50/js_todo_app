@@ -16,6 +16,7 @@ import {
   FormHelperText,
   InputLabel,
   Divider,
+  Popover,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
@@ -30,6 +31,8 @@ import {
   deleteAllTodos,
   createSavedTodosInLocalStorage,
   getAndSaveTodoListFromLocalStorage,
+  getSavedTodoListsNamesFromLocalStorage,
+  saveMyCurrentTodos,
 } from "../helper/localStorage";
 import ToDo from "./components/Todo";
 
@@ -60,7 +63,7 @@ const TodoFeed = ({
         text: todo,
         highPriority: highPriority === "contained" ? true : false,
         status: 1,
-        categories: categoriesSelected,
+        categories: categoriesSelected.length ? categoriesSelected : [],
       };
       setTodoToLocalStorage(newTodo);
       setTodo("");
@@ -86,6 +89,7 @@ const TodoFeed = ({
     const {
       target: { value },
     } = e;
+
     setCategoriesSelected(
       // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
@@ -311,10 +315,24 @@ const DeleteDialog = ({ handleAllTodosDelete }) => {
     setOpen(false);
   };
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const popoverOpen = Boolean(anchorEl);
+
   return (
     <div>
       <IconButton
         onClick={handleClickOpen}
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
         sx={{
           "&:hover": { color: red[500], bgcolor: red[50] },
           m: "12px",
@@ -323,6 +341,26 @@ const DeleteDialog = ({ handleAllTodosDelete }) => {
       >
         <DeleteForeverOutlinedIcon />
       </IconButton>
+      <Popover
+        id="mouse-over-popover"
+        sx={{
+          pointerEvents: "none",
+        }}
+        open={popoverOpen}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <Typography sx={{ p: 1 }}>Delete All Todos</Typography>
+      </Popover>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -371,10 +409,24 @@ const SaveDialog = ({ handleAllTodosDelete }) => {
     handleSaveAndDelete();
   };
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const popoverOpen = Boolean(anchorEl);
+
   return (
     <div>
       <IconButton
         onClick={handleClickOpen}
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
         sx={{
           "&:hover": { color: lightBlue[500], bgcolor: lightBlue[50] },
           m: "12px",
@@ -383,6 +435,26 @@ const SaveDialog = ({ handleAllTodosDelete }) => {
       >
         <SaveIcon />
       </IconButton>
+      <Popover
+        id="mouse-over-popover"
+        sx={{
+          pointerEvents: "none",
+        }}
+        open={popoverOpen}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <Typography sx={{ p: 1 }}>Save Todo List</Typography>
+      </Popover>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -427,7 +499,10 @@ const SaveDialog = ({ handleAllTodosDelete }) => {
 
 const RestoreDialog = ({ childChange, setChildChange }) => {
   const [open, setOpen] = useState(false);
-  const [todoList, setTodoList] = useState("");
+  const [selectedSavedTodoList, setSelectedSavedTodoList] = useState([]);
+
+  // placeholder fix
+  const listOfSavedTodos = getSavedTodoListsNamesFromLocalStorage();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -437,23 +512,43 @@ const RestoreDialog = ({ childChange, setChildChange }) => {
     setOpen(false);
   };
 
-  const handleTodoListChange = (e) => {
-    setTodoList(e.target.value);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (todoList !== "") {
-      getAndSaveTodoListFromLocalStorage(todoList);
+    if (selectedSavedTodoList !== "") {
+      getAndSaveTodoListFromLocalStorage(selectedSavedTodoList);
       setOpen(false);
       childChange ? setChildChange(false) : setChildChange(true);
+      setSelectedSavedTodoList([]);
     } else return;
+  };
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const popoverOpen = Boolean(anchorEl);
+
+  const handleSavedTodoListChange = (e) => {
+    const {
+      target: { value },
+    } = e;
+    setSelectedSavedTodoList(
+      typeof value === "string" ? value.split(",") : value
+    );
   };
 
   return (
     <div>
       <IconButton
         onClick={handleClickOpen}
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
         sx={{
           "&:hover": { color: green[500], bgcolor: green[50] },
           color: green[500],
@@ -462,6 +557,26 @@ const RestoreDialog = ({ childChange, setChildChange }) => {
       >
         <RestoreIcon />
       </IconButton>
+      <Popover
+        id="mouse-over-popover"
+        sx={{
+          pointerEvents: "none",
+        }}
+        open={popoverOpen}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <Typography sx={{ p: 1 }}>Restore Todo List</Typography>
+      </Popover>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -471,9 +586,9 @@ const RestoreDialog = ({ childChange, setChildChange }) => {
         <DialogTitle id="alert-dialog-title">
           {"Restore Your ToDo's?"}
         </DialogTitle>
-        <DialogActions>
-          <form onSubmit={handleSubmit}>
-            <TextField
+        {/* <DialogActions> */}
+        <form onSubmit={handleSubmit}>
+          {/* <TextField
               id="filled-basic"
               label="Enter Todo Here"
               placeholder="Enter Todo List Name"
@@ -493,12 +608,33 @@ const RestoreDialog = ({ childChange, setChildChange }) => {
                   },
                 },
               }}
-            />
-            <Box className="restore-todo">
-              <Button onClick={handleSubmit}>Restore ToDo List</Button>
-            </Box>
-          </form>
-        </DialogActions>
+            /> */}
+          <FormControl sx={{ m: 1, minWidth: 400 }}>
+            <InputLabel>Select Todo List</InputLabel>
+            <Select
+              autoWidth
+              input={<OutlinedInput label="Tag" />}
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              placeholder="Select Todo List"
+              name="todo-list"
+              value={selectedSavedTodoList}
+              label="Select Todo List"
+              onChange={handleSavedTodoListChange}
+            >
+              {listOfSavedTodos.length &&
+                listOfSavedTodos.map((savedListName) => (
+                  <MenuItem key={savedListName} value={savedListName}>
+                    <ListItemText primary={savedListName} />
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <Box className="restore-todo">
+            <Button onClick={handleSubmit}>Restore ToDo List</Button>
+          </Box>
+        </form>
+        {/* </DialogActions> */}
       </Dialog>
     </div>
   );

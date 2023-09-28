@@ -14,15 +14,6 @@ export const getTodosFromLocalStorage = () => {
   return todoArray;
 };
 
-// Get saved Todos under saved name
-
-export const getAndSaveTodoListFromLocalStorage = (listName) => {
-  const savedTodoList = localStorage.getItem(listName)
-    ? JSON.parse(localStorage.getItem(listName))
-    : [];
-  localStorage.setItem("Todos", JSON.stringify([...savedTodoList]));
-};
-
 export const updateTodoStatus = (todo, newStatus) => {
   const todoArray = getTodosFromLocalStorage();
   const newTodoArray = todoArray.filter((t) => t.id !== todo.id);
@@ -62,11 +53,6 @@ export const deleteTodo = (todo) => {
 
 export const deleteAllTodos = () => {
   localStorage.removeItem("Todos");
-};
-
-export const createSavedTodosInLocalStorage = (listName) => {
-  const todoArray = getTodosFromLocalStorage();
-  localStorage.setItem(listName, JSON.stringify(todoArray));
 };
 
 export const updateTodoText = (todo, text) => {
@@ -128,4 +114,52 @@ export const addTodoCategory = (todo, categoryArray) => {
     return t;
   });
   localStorage.setItem("Todos", JSON.stringify(newTodoArray));
+};
+
+// Saving Todo List/Getting Todo List
+
+export const createSavedTodosInLocalStorage = (listName) => {
+  const savedTodoLists = localStorage.getItem("SavedTodoLists")
+    ? JSON.parse(localStorage.getItem("SavedTodoLists"))
+    : [];
+  const todoArray = getTodosFromLocalStorage();
+  let savedTodoArray = { dateCreated: Date() };
+  savedTodoArray[listName] = todoArray;
+  localStorage.setItem(
+    "SavedTodoLists",
+    JSON.stringify([...savedTodoLists, savedTodoArray])
+  );
+};
+
+export const getSavedTodoListsNamesFromLocalStorage = () => {
+  const savedTodoLists = localStorage.getItem("SavedTodoLists")
+    ? JSON.parse(localStorage.getItem("SavedTodoLists"))
+    : [];
+  const todoListNames = savedTodoLists.map((list) => Object.keys(list)[1]);
+  // console.log(todoListNames);
+  return todoListNames;
+};
+
+export const getAndSaveTodoListFromLocalStorage = (listName) => {
+  const savedTodoLists = localStorage.getItem("SavedTodoLists")
+    ? JSON.parse(localStorage.getItem("SavedTodoLists"))
+    : [];
+
+  // console.log(savedTodoList[listName]);
+  const pickedList = savedTodoLists.filter((list) => list[listName]);
+  // console.log(pickedList);
+  const renderedListFromPickedList = pickedList[0][listName];
+  console.log(renderedListFromPickedList);
+  localStorage.setItem(
+    "Todos",
+    JSON.stringify([...renderedListFromPickedList])
+  );
+};
+
+// Get previous Saved List
+export const saveMyCurrentTodos = () => {
+  const savedTodoList = localStorage.getItem("9-26-23_2")
+    ? JSON.parse(localStorage.getItem("9-26-23_2"))
+    : [];
+  localStorage.setItem("Todos", JSON.stringify([...savedTodoList]));
 };
