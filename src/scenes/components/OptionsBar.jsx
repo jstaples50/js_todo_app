@@ -361,12 +361,17 @@ const RestoreDialog = ({ childChange, setChildChange }) => {
               label="Select Todo List"
               onChange={handleSavedTodoListChange}
             >
-              {listOfSavedTodos.length &&
+              {listOfSavedTodos.length ? (
                 listOfSavedTodos.map((savedListName) => (
                   <MenuItem key={savedListName} value={savedListName}>
                     <ListItemText primary={savedListName} />
                   </MenuItem>
-                ))}
+                ))
+              ) : (
+                <MenuItem>
+                  <ListItemText primary="No Saved Todo Lists!" />
+                </MenuItem>
+              )}
             </Select>
           </FormControl>
           <Box className="restore-todo">
