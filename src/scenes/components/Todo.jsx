@@ -404,8 +404,6 @@ function AddCategory({ childChange, setChildChange, categoryArray, todo }) {
 
   const open = Boolean(anchorEl);
 
-  useEffect(() => {}, []);
-
   const ColorDialog = () => {
     const [selectedCategories, setSelectedCategories] = useState([]);
 

@@ -38,3 +38,15 @@ export const sortByStatusAndDate = (arr) => {
 export const getAllCategoryStrings = (categoriesToShow) => {
   return categoriesToShow.map((c) => c.title);
 };
+
+export const filterCategoryStrings = (todo, categoriesDataSets) => {
+  const categoryStringArray = [];
+  todo.categories.map((c) => categoryStringArray.push(c.title));
+  let isCategory = false;
+  categoriesDataSets.forEach((c) => {
+    if (categoryStringArray.includes(c)) {
+      isCategory = true;
+    }
+  });
+  return isCategory;
+};

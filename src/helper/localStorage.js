@@ -135,9 +135,11 @@ export const getSavedTodoListsNamesFromLocalStorage = () => {
   const savedTodoLists = localStorage.getItem("SavedTodoLists")
     ? JSON.parse(localStorage.getItem("SavedTodoLists"))
     : [];
-  const todoListNames = savedTodoLists.map((list) => Object.keys(list)[1]);
-  // console.log(todoListNames);
-  return todoListNames;
+  if (savedTodoLists !== undefined) {
+    const todoListNames = savedTodoLists.map((list) => Object.keys(list)[1]);
+    // console.log(todoListNames);
+    return todoListNames;
+  } else return;
 };
 
 export const getAndSaveTodoListFromLocalStorage = (listName) => {

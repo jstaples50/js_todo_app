@@ -1,28 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
-import {
-  Box,
-  TextField,
-  Typography,
-  InputLabel,
-  Select,
-  MenuItem,
-  Checkbox,
-  ListItemText,
-  Button,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  chipClasses,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
-import { colors } from "../../helper/theme";
-import { grey } from "@mui/material/colors";
-
-import {
-  setCategoryToLocalStorage,
-  getCategoriesFromLocalStorage,
-} from "../../helper/localStorage";
+import { getCategoriesFromLocalStorage } from "../../helper/localStorage";
 
 const CategorySelector = ({
   categoryArray,
@@ -53,15 +33,6 @@ const CategorySelector = ({
             />
           ))
         : null}
-
-      {/* TEST TO CHECK CATEGORIES TO SHOW */}
-      {/* {categoriesToShow.length ? (
-        categoriesToShow.map((c) => (
-          <Typography color={c.color.value[500]}>{c.title}</Typography>
-        ))
-      ) : (
-        <Typography>No Categories</Typography>
-      )} */}
     </Box>
   );
 };
