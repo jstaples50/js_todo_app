@@ -1,4 +1,4 @@
-import { CssBaseline } from "@mui/material";
+import { CssBaseline, Box } from "@mui/material";
 import CategoryFeed from "./scenes/CategoryFeed";
 import TodoFeed from "./scenes/TodoFeed";
 import { useState, useEffect } from "react";
@@ -24,6 +24,7 @@ function App() {
     <div
       className="App"
       style={{
+        width: "100vw",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -32,25 +33,35 @@ function App() {
     >
       <CssBaseline />
       <h1>JS TODOS!</h1>
-      <TodoFeed
-        categoryArray={categoryArray}
-        setCategoryArray={setCategoryArray}
-        categoriesToShow={categoriesToShow}
-        childChange={childChange}
-        setChildChange={setChildChange}
-        categoriesDataSets={categoriesDataSets}
-        setCategoriesDataSets={setCategoriesDataSets}
-      />
-      <CategoryFeed
-        categoryArray={categoryArray}
-        setCategoryArray={setCategoryArray}
-        categoriesToShow={categoriesToShow}
-        setCategoriesToShow={setCategoriesToShow}
-        childChange={childChange}
-        setChildChange={setChildChange}
-        categoriesDataSets={categoriesDataSets}
-        setCategoriesDataSets={setCategoriesDataSets}
-      />
+      <Box
+        style={{
+          width: "100vw",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "flex-start",
+        }}
+      >
+        <TodoFeed
+          categoryArray={categoryArray}
+          setCategoryArray={setCategoryArray}
+          categoriesToShow={categoriesToShow}
+          childChange={childChange}
+          setChildChange={setChildChange}
+          categoriesDataSets={categoriesDataSets}
+          setCategoriesDataSets={setCategoriesDataSets}
+        />
+        <CategoryFeed
+          categoryArray={categoryArray}
+          setCategoryArray={setCategoryArray}
+          categoriesToShow={categoriesToShow}
+          setCategoriesToShow={setCategoriesToShow}
+          childChange={childChange}
+          setChildChange={setChildChange}
+          categoriesDataSets={categoriesDataSets}
+          setCategoriesDataSets={setCategoriesDataSets}
+        />
+      </Box>
     </div>
   );
 }

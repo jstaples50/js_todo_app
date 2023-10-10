@@ -10,9 +10,6 @@ import {
   Checkbox,
   ListItemText,
   Button,
-  FormGroup,
-  FormControlLabel,
-  Switch,
 } from "@mui/material";
 
 import CategorySelector from "./components/CategorySelector";
@@ -65,7 +62,7 @@ const CategoryFeed = ({
   }, [formInputs]);
 
   return (
-    <Box>
+    <Box width={"25%"}>
       <Box>
         <form onSubmit={handleFormSubmit}>
           <Box className="category-form-inputs">
@@ -89,7 +86,6 @@ const CategoryFeed = ({
               label="Color"
               onChange={handleCategoryFormChange}
               sx={{ minWidth: "120px" }}
-              // renderValue={formInputs.color}
             >
               {colors.map((color) => (
                 <MenuItem key={color.name} value={color}>
@@ -119,21 +115,6 @@ const CategoryFeed = ({
         ></Box>
         <Typography>{formInputs.color.name}</Typography>
       </Box>
-      {/* <Box className="category-displays">
-        {categoryArray.length &&
-          categoryArray.map((category) => (
-            <Box key={category.title}>
-              <Box
-                width={"20px"}
-                height={"20px"}
-                borderRadius={"50%"}
-                bgcolor={category.color.value[500]}
-                m={"10px"}
-              ></Box>
-              <Typography>{category.title}</Typography>
-            </Box>
-          ))}
-      </Box> */}
       <CategorySelector
         categoryArray={categoryArray}
         categoriesToShow={categoriesToShow}

@@ -3,47 +3,32 @@ import {
   TextField,
   Box,
   Typography,
-  IconButton,
-  Dialog,
-  DialogActions,
-  DialogTitle,
   Select,
   MenuItem,
-  Checkbox,
   ListItemText,
   OutlinedInput,
   FormControl,
-  FormHelperText,
   InputLabel,
   Divider,
-  Popover,
+  Stack,
 } from "@mui/material";
 import Button from "@mui/material/Button";
-import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
-import RestoreIcon from "@mui/icons-material/Restore";
-import SaveIcon from "@mui/icons-material/Save";
-import { grey, red, green, lightBlue } from "@mui/material/colors";
+import { grey } from "@mui/material/colors";
 import { v4 as uuidv4 } from "uuid";
 import { sortByStatusAndDate } from "../helper/helperFunctions";
 import {
   setTodoToLocalStorage,
   getTodosFromLocalStorage,
-  deleteAllTodos,
-  createSavedTodosInLocalStorage,
-  getAndSaveTodoListFromLocalStorage,
-  getSavedTodoListsNamesFromLocalStorage,
-  saveMyCurrentTodos,
 } from "../helper/localStorage";
-import ToDo from "./components/Todo";
+import { filterCategoryStrings } from "../helper/helperFunctions";
+import ToDo from "./Todo";
+import OptionsBar from "./components/OptionsBar";
 
 const TodoFeed = ({
   categoryArray,
-  setCategoryArray,
-  categoriesToShow,
   childChange,
   setChildChange,
   categoriesDataSets,
-  setCategoriesDataSets,
 }) => {
   const [todo, setTodo] = useState("");
   const [todoArray, setTodoArray] = useState([]);
@@ -79,11 +64,6 @@ const TodoFeed = ({
       : setHighPriority("outlined");
   };
 
-  const handleAllTodosDelete = () => {
-    deleteAllTodos();
-    setTodoArray([]);
-  };
-
   const handleCategorySelectionChange = (e) => {
     // setCategoriesSelected(e.target.value);
     const {
@@ -92,20 +72,9 @@ const TodoFeed = ({
 
     setCategoriesSelected(
       // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
+      // typeof value === "string" ? value.split(",") : value
+      value
     );
-  };
-
-  const filterCategoryStrings = (todo, categoriesDataSets) => {
-    const categoryStringArray = [];
-    todo.categories.map((c) => categoryStringArray.push(c.title));
-    let isCategory = false;
-    categoriesDataSets.forEach((c) => {
-      if (categoryStringArray.includes(c)) {
-        isCategory = true;
-      }
-    });
-    return isCategory;
   };
 
   useEffect(() => {
@@ -115,21 +84,12 @@ const TodoFeed = ({
   }, [todo, childChange]);
 
   return (
-    <Box>
-      <Box
-        className="delete-bar"
-        width={"100vw"}
-        display={"flex"}
-        justifyContent={"flex-start"}
-        alignItems={"center"}
-      >
-        <DeleteDialog handleAllTodosDelete={handleAllTodosDelete} />
-        <SaveDialog handleAllTodosDelete={handleAllTodosDelete} />
-        <RestoreDialog
-          childChange={childChange}
-          setChildChange={setChildChange}
-        />
-      </Box>
+    <Box width={"75%"}>
+      <OptionsBar
+        childChange={childChange}
+        setChildChange={setChildChange}
+        setTodoArray={setTodoArray}
+      />
       <form onSubmit={handleTodoSubmit}>
         <Box
           className="form-inputs"
@@ -137,7 +97,7 @@ const TodoFeed = ({
           flexDirection={"column"}
           justifyContent={"center"}
           alignItems={"center"}
-          width={"100vw"}
+          width={"100%"}
         >
           <TextField
             id="filled-basic"
@@ -166,7 +126,11 @@ const TodoFeed = ({
             width={"300px"}
             justifyContent={"space-evenly"}
           >
-            <Button variant="outlined" onClick={handleTodoSubmit}>
+            <Button
+              variant="outlined"
+              onClick={handleTodoSubmit}
+              disabled={!categoriesSelected.length}
+            >
               Submit
             </Button>
             <Button
@@ -183,6 +147,29 @@ const TodoFeed = ({
               multiple
               autoWidth
               input={<OutlinedInput label="Tag" />}
+              renderValue={(selected) => (
+                <Stack gap={1} direction="row" flexWrap="wrap">
+                  {selected.map((value) => (
+                    // <Chip key={value} label={value.title} />
+                    <Box
+                      display={"flex"}
+                      flexDirection={"column"}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      m={"auto 10px"}
+                    >
+                      <Box
+                        bgcolor={value.color.value[500]}
+                        width={"15px"}
+                        height={"15px"}
+                        borderRadius={"50%"}
+                        m={"12px"}
+                      ></Box>
+                      <Typography>{value.title}</Typography>
+                    </Box>
+                  ))}
+                </Stack>
+              )}
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               placeholder="Select Category"
@@ -190,23 +177,10 @@ const TodoFeed = ({
               value={categoriesSelected}
               label="Select Category"
               onChange={handleCategorySelectionChange}
-              // renderValue={(selected) => selected.join(", ")}
-              // MenuProps={MenuProps}
             >
-              {/* <MenuItem value="">
-                <em>None</em>
-              </MenuItem> */}
               {categoryArray.length &&
                 categoryArray.map((category) => (
                   <MenuItem key={category.title} value={category}>
-                    {/* <Checkbox
-                      sx={{
-                        color: category.color.value[800],
-                        "&.Mui-checked": {
-                          color: category.color.value[600],
-                        },
-                      }}
-                    /> */}
                     <Box
                       bgcolor={category.color.value[500]}
                       width={"15px"}
@@ -247,7 +221,7 @@ const TodoFeed = ({
           <Typography mt={"10px"}>No Todos Yet!</Typography>
         )}
         <Divider
-          sx={{ bgcolor: grey[400], width: "95vw", borderBottomWidth: 4, m: 2 }}
+          sx={{ bgcolor: grey[400], width: "95%", borderBottomWidth: 4, m: 2 }}
         ></Divider>
         {todoArray.length
           ? todoArray
@@ -266,7 +240,7 @@ const TodoFeed = ({
               ))
           : null}
         <Divider
-          sx={{ bgcolor: grey[400], width: "95vw", borderBottomWidth: 4, m: 2 }}
+          sx={{ bgcolor: grey[400], width: "95%", borderBottomWidth: 4, m: 2 }}
         ></Divider>
         {todoArray.length
           ? todoArray
@@ -287,7 +261,7 @@ const TodoFeed = ({
         <Divider
           sx={{
             bgcolor: grey[400],
-            width: "95vw",
+            width: "95%",
             borderBottomWidth: 4,
             m: 2,
           }}
@@ -298,344 +272,3 @@ const TodoFeed = ({
 };
 
 export default TodoFeed;
-
-const DeleteDialog = ({ handleAllTodosDelete }) => {
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handlePermanentDelete = () => {
-    handleAllTodosDelete();
-    setOpen(false);
-  };
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const popoverOpen = Boolean(anchorEl);
-
-  return (
-    <div>
-      <IconButton
-        onClick={handleClickOpen}
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
-        sx={{
-          "&:hover": { color: red[500], bgcolor: red[50] },
-          m: "12px",
-          color: red[500],
-        }}
-      >
-        <DeleteForeverOutlinedIcon />
-      </IconButton>
-      <Popover
-        id="mouse-over-popover"
-        sx={{
-          pointerEvents: "none",
-        }}
-        open={popoverOpen}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        onClose={handlePopoverClose}
-        disableRestoreFocus
-      >
-        <Typography sx={{ p: 1 }}>Delete All Todos</Typography>
-      </Popover>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Delete All of Your ToDos?"}
-        </DialogTitle>
-        <DialogActions>
-          <Button onClick={handlePermanentDelete}>
-            Permanently Delete Todos
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
-};
-
-const SaveDialog = ({ handleAllTodosDelete }) => {
-  const [open, setOpen] = useState(false);
-  const [namedTodoList, setNamedTodoList] = useState("");
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleListNameChange = (e) => {
-    setNamedTodoList(e.target.value);
-  };
-
-  // !!!!!!!!
-  const handleSaveAndDelete = () => {
-    createSavedTodosInLocalStorage(namedTodoList);
-    handleAllTodosDelete();
-    setNamedTodoList("");
-    setOpen(false);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleSaveAndDelete();
-  };
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const popoverOpen = Boolean(anchorEl);
-
-  return (
-    <div>
-      <IconButton
-        onClick={handleClickOpen}
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
-        sx={{
-          "&:hover": { color: lightBlue[500], bgcolor: lightBlue[50] },
-          m: "12px",
-          color: lightBlue[500],
-        }}
-      >
-        <SaveIcon />
-      </IconButton>
-      <Popover
-        id="mouse-over-popover"
-        sx={{
-          pointerEvents: "none",
-        }}
-        open={popoverOpen}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        onClose={handlePopoverClose}
-        disableRestoreFocus
-      >
-        <Typography sx={{ p: 1 }}>Save Todo List</Typography>
-      </Popover>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Save Your Todo List?"}
-        </DialogTitle>
-        <form onSubmit={handleSubmit}>
-          <DialogActions>
-            <TextField
-              id="filled-basic"
-              label="Enter List Name"
-              placeholder="Enter List Name"
-              variant="filled"
-              autoComplete="off"
-              value={namedTodoList}
-              onChange={handleListNameChange}
-              fullWidth
-              sx={{
-                width: "90%",
-                m: "10px auto",
-              }}
-              InputProps={{
-                sx: {
-                  "& input": {
-                    textAlign: "center",
-                  },
-                },
-              }}
-            />
-            <Button onClick={handleSaveAndDelete} autoFocus>
-              Save Todos and Start New Feed
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
-    </div>
-  );
-};
-
-const RestoreDialog = ({ childChange, setChildChange }) => {
-  const [open, setOpen] = useState(false);
-  const [selectedSavedTodoList, setSelectedSavedTodoList] = useState([]);
-
-  // placeholder fix
-  const listOfSavedTodos = getSavedTodoListsNamesFromLocalStorage();
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (selectedSavedTodoList !== "") {
-      getAndSaveTodoListFromLocalStorage(selectedSavedTodoList);
-      setOpen(false);
-      childChange ? setChildChange(false) : setChildChange(true);
-      setSelectedSavedTodoList([]);
-    } else return;
-  };
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const popoverOpen = Boolean(anchorEl);
-
-  const handleSavedTodoListChange = (e) => {
-    const {
-      target: { value },
-    } = e;
-    setSelectedSavedTodoList(
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
-
-  return (
-    <div>
-      <IconButton
-        onClick={handleClickOpen}
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
-        sx={{
-          "&:hover": { color: green[500], bgcolor: green[50] },
-          color: green[500],
-          m: "12px",
-        }}
-      >
-        <RestoreIcon />
-      </IconButton>
-      <Popover
-        id="mouse-over-popover"
-        sx={{
-          pointerEvents: "none",
-        }}
-        open={popoverOpen}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        onClose={handlePopoverClose}
-        disableRestoreFocus
-      >
-        <Typography sx={{ p: 1 }}>Restore Todo List</Typography>
-      </Popover>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Restore Your ToDo's?"}
-        </DialogTitle>
-        {/* <DialogActions> */}
-        <form onSubmit={handleSubmit}>
-          {/* <TextField
-              id="filled-basic"
-              label="Enter Todo Here"
-              placeholder="Enter Todo List Name"
-              variant="filled"
-              autoComplete="off"
-              value={todoList}
-              onChange={handleTodoListChange}
-              fullWidth
-              sx={{
-                width: "90%",
-                m: "10px auto",
-              }}
-              InputProps={{
-                sx: {
-                  "& input": {
-                    textAlign: "center",
-                  },
-                },
-              }}
-            /> */}
-          <FormControl sx={{ m: 1, minWidth: 400 }}>
-            <InputLabel>Select Todo List</InputLabel>
-            <Select
-              autoWidth
-              input={<OutlinedInput label="Tag" />}
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              placeholder="Select Todo List"
-              name="todo-list"
-              value={selectedSavedTodoList}
-              label="Select Todo List"
-              onChange={handleSavedTodoListChange}
-            >
-              {listOfSavedTodos.length &&
-                listOfSavedTodos.map((savedListName) => (
-                  <MenuItem key={savedListName} value={savedListName}>
-                    <ListItemText primary={savedListName} />
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-          <Box className="restore-todo">
-            <Button onClick={handleSubmit}>Restore ToDo List</Button>
-          </Box>
-        </form>
-        {/* </DialogActions> */}
-      </Dialog>
-    </div>
-  );
-};
