@@ -3,10 +3,6 @@ import {
   TextField,
   Box,
   Typography,
-  IconButton,
-  Dialog,
-  DialogActions,
-  DialogTitle,
   Select,
   MenuItem,
   ListItemText,
@@ -14,25 +10,18 @@ import {
   FormControl,
   InputLabel,
   Divider,
-  Popover,
+  Stack,
 } from "@mui/material";
 import Button from "@mui/material/Button";
-import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
-import RestoreIcon from "@mui/icons-material/Restore";
-import SaveIcon from "@mui/icons-material/Save";
-import { grey, red, green, lightBlue } from "@mui/material/colors";
+import { grey } from "@mui/material/colors";
 import { v4 as uuidv4 } from "uuid";
 import { sortByStatusAndDate } from "../helper/helperFunctions";
 import {
   setTodoToLocalStorage,
   getTodosFromLocalStorage,
-  deleteAllTodos,
-  createSavedTodosInLocalStorage,
-  getAndSaveTodoListFromLocalStorage,
-  getSavedTodoListsNamesFromLocalStorage,
 } from "../helper/localStorage";
 import { filterCategoryStrings } from "../helper/helperFunctions";
-import ToDo from "./components/Todo";
+import ToDo from "./Todo";
 import OptionsBar from "./components/OptionsBar";
 
 const TodoFeed = ({
@@ -83,7 +72,8 @@ const TodoFeed = ({
 
     setCategoriesSelected(
       // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
+      // typeof value === "string" ? value.split(",") : value
+      value
     );
   };
 
@@ -94,7 +84,7 @@ const TodoFeed = ({
   }, [todo, childChange]);
 
   return (
-    <Box>
+    <Box width={"75%"}>
       <OptionsBar
         childChange={childChange}
         setChildChange={setChildChange}
@@ -107,7 +97,7 @@ const TodoFeed = ({
           flexDirection={"column"}
           justifyContent={"center"}
           alignItems={"center"}
-          width={"100vw"}
+          width={"100%"}
         >
           <TextField
             id="filled-basic"
@@ -136,7 +126,11 @@ const TodoFeed = ({
             width={"300px"}
             justifyContent={"space-evenly"}
           >
-            <Button variant="outlined" onClick={handleTodoSubmit}>
+            <Button
+              variant="outlined"
+              onClick={handleTodoSubmit}
+              disabled={!categoriesSelected.length}
+            >
               Submit
             </Button>
             <Button
@@ -153,6 +147,29 @@ const TodoFeed = ({
               multiple
               autoWidth
               input={<OutlinedInput label="Tag" />}
+              renderValue={(selected) => (
+                <Stack gap={1} direction="row" flexWrap="wrap">
+                  {selected.map((value) => (
+                    // <Chip key={value} label={value.title} />
+                    <Box
+                      display={"flex"}
+                      flexDirection={"column"}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      m={"auto 10px"}
+                    >
+                      <Box
+                        bgcolor={value.color.value[500]}
+                        width={"15px"}
+                        height={"15px"}
+                        borderRadius={"50%"}
+                        m={"12px"}
+                      ></Box>
+                      <Typography>{value.title}</Typography>
+                    </Box>
+                  ))}
+                </Stack>
+              )}
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               placeholder="Select Category"
@@ -204,7 +221,7 @@ const TodoFeed = ({
           <Typography mt={"10px"}>No Todos Yet!</Typography>
         )}
         <Divider
-          sx={{ bgcolor: grey[400], width: "95vw", borderBottomWidth: 4, m: 2 }}
+          sx={{ bgcolor: grey[400], width: "95%", borderBottomWidth: 4, m: 2 }}
         ></Divider>
         {todoArray.length
           ? todoArray
@@ -223,7 +240,7 @@ const TodoFeed = ({
               ))
           : null}
         <Divider
-          sx={{ bgcolor: grey[400], width: "95vw", borderBottomWidth: 4, m: 2 }}
+          sx={{ bgcolor: grey[400], width: "95%", borderBottomWidth: 4, m: 2 }}
         ></Divider>
         {todoArray.length
           ? todoArray
@@ -244,7 +261,7 @@ const TodoFeed = ({
         <Divider
           sx={{
             bgcolor: grey[400],
-            width: "95vw",
+            width: "95%",
             borderBottomWidth: 4,
             m: 2,
           }}

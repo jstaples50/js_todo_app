@@ -62,7 +62,7 @@ const CategoryFeed = ({
   }, [formInputs]);
 
   return (
-    <Box>
+    <Box width={"25%"}>
       <Box>
         <form onSubmit={handleFormSubmit}>
           <Box className="category-form-inputs">
