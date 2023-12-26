@@ -50,3 +50,15 @@ export const filterCategoryStrings = (todo, categoriesDataSets) => {
   });
   return isCategory;
 };
+
+export const filteredCategoriesToAdd = (todo, categoryArray) => {
+  const existingCategories = todo.categories.map((c) => c.title);
+
+  // filter helper function
+  const isInCategoryArray = (category) => {
+    return !existingCategories.includes(category.title);
+  };
+
+  const filteredCategoryArray = categoryArray.filter(isInCategoryArray);
+  return filteredCategoryArray;
+};

@@ -109,7 +109,7 @@ const ToDo = ({ todo, childChange, setChildChange, categoryArray }) => {
         )}
         {todo.categories.length
           ? todo.categories.map((c) => (
-              <Box>
+              <Box key={c.title}>
                 <CategoryPopover
                   Category={c}
                   todo={todo}
@@ -123,7 +123,7 @@ const ToDo = ({ todo, childChange, setChildChange, categoryArray }) => {
       <Typography sx={{ m: "5px", fontWeight: "bold", color: grey[600] }}>
         {todo.text}
       </Typography>
-      <StatusButton onClick={() => setOpen(true)} statusColor={borderColor}>
+      <StatusButton onClick={() => setOpen(true)} statuscolor={borderColor}>
         Set Status
       </StatusButton>
       <StatusDialog
@@ -138,11 +138,11 @@ const ToDo = ({ todo, childChange, setChildChange, categoryArray }) => {
 
 // TODO ---------------------------------------------------
 
-const StatusButton = styled(Button)(({ theme, statusColor }) => ({
+const StatusButton = styled(Button)(({ theme, statuscolor }) => ({
   color: theme.palette.getContrastText(purple[500]),
-  backgroundColor: statusColor.main,
+  backgroundColor: statuscolor.main,
   "&:hover": {
-    backgroundColor: statusColor.dark,
+    backgroundColor: statuscolor.dark,
   },
 }));
 

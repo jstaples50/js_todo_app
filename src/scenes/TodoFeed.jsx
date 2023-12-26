@@ -41,6 +41,7 @@ const TodoFeed = ({
 
   const handleTodoSubmit = (e) => {
     e.preventDefault();
+    // Where new Todo is created
     if (todo !== "") {
       const newTodo = {
         id: uuidv4(),
@@ -65,7 +66,6 @@ const TodoFeed = ({
   };
 
   const handleCategorySelectionChange = (e) => {
-    // setCategoriesSelected(e.target.value);
     const {
       target: { value },
     } = e;

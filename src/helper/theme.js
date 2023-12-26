@@ -20,28 +20,6 @@ import {
   blueGrey,
 } from "@mui/material/colors";
 
-// export const colors = {
-//   lightBlue: { value: lightBlue, name: "Light Blue" },
-//   orange: { value: orange, name: "Orange" },
-//   green: { value: green, name: "Green" },
-//   grey: { value: grey, name: "Grey" },
-//   purple: { value: purple, name: "Purple" },
-//   red: { value: red, name: "Red" },
-//   pink: { value: pink, name: "Pink" },
-//   deepPurple: { value: deepPurple, name: "Deep Purple" },
-//   indigo: { value: indigo, name: "Indigo" },
-//   blue: { value: blue, name: "Blue" },
-//   cyan: { value: cyan, name: "Cyan" },
-//   teal: { value: teal, name: "Teal" },
-//   lightGreen: { value: lightGreen, name: "Light Green" },
-//   lime: { value: lime, name: "Lime" },
-//   yellow: { value: yellow, name: "Yellow" },
-//   amber: { value: amber, name: "Amber" },
-//   deepOrange: { value: deepOrange, name: "Light Blue" },
-//   brown: { value: brown, name: "Brown" },
-//   blueGrey: { value: blueGrey, name: "Blue Grey" },
-// };
-
 export const colors = [
   { value: lightBlue, name: "Light Blue" },
   { value: orange, name: "Orange" },

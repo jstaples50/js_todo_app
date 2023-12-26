@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import { filteredCategoriesToAdd } from "./helperFunctions";
 
 export const setTodoToLocalStorage = (todo) => {
   const todoArray = getTodosFromLocalStorage();
@@ -108,11 +109,13 @@ export const addTodoCategory = (todo, categoryArray) => {
   const newTodoArray = todoArray.map((t) => {
     if (t.id === todo.id && categoryArray.length) {
       const oldCategories = t.categories;
-      const newCategories = oldCategories.concat(categoryArray);
-      t.categories = newCategories;
+      const newCategories = filteredCategoriesToAdd(t, categoryArray);
+      const concatCategories = oldCategories.concat(newCategories);
+      t.categories = concatCategories;
     }
     return t;
   });
+
   localStorage.setItem("Todos", JSON.stringify(newTodoArray));
 };
 

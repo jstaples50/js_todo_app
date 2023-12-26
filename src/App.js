@@ -10,6 +10,7 @@ function App() {
   const [categoryArray, setCategoryArray] = useState([]);
   const [categoriesToShow, setCategoriesToShow] = useState(categoryArray);
   const [categoriesDataSets, setCategoriesDataSets] = useState([]);
+  // This state is used to rerender page when a state is changed on the global level
   const [childChange, setChildChange] = useState(false);
 
   useEffect(() => {

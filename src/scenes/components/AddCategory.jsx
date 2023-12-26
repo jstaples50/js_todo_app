@@ -41,6 +41,7 @@ function AddCategory({ childChange, setChildChange, categoryArray, todo }) {
           {categoryArray &&
             categoryArray.map((c) => (
               <ColorOptionButton
+                key={c.title}
                 category={c}
                 selectedCategories={selectedCategories}
                 setSelectedCategories={setSelectedCategories}

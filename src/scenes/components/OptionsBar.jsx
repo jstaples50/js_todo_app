@@ -13,25 +13,19 @@ import {
   OutlinedInput,
   FormControl,
   InputLabel,
-  Divider,
   Popover,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import RestoreIcon from "@mui/icons-material/Restore";
 import SaveIcon from "@mui/icons-material/Save";
-import { grey, red, green, lightBlue } from "@mui/material/colors";
-import { v4 as uuidv4 } from "uuid";
-import { sortByStatusAndDate } from "../../helper/helperFunctions";
+import { red, green, lightBlue } from "@mui/material/colors";
 import {
-  setTodoToLocalStorage,
-  getTodosFromLocalStorage,
   deleteAllTodos,
   createSavedTodosInLocalStorage,
   getAndSaveTodoListFromLocalStorage,
   getSavedTodoListsNamesFromLocalStorage,
 } from "../../helper/localStorage";
-import { filterCategoryStrings } from "../../helper/helperFunctions";
 
 const OptionsBar = ({ childChange, setChildChange, setTodoArray }) => {
   const handleAllTodosDelete = () => {
@@ -156,7 +150,6 @@ const SaveDialog = ({ handleAllTodosDelete }) => {
     setNamedTodoList(e.target.value);
   };
 
-  // !!!!!!!!
   const handleSaveAndDelete = () => {
     createSavedTodosInLocalStorage(namedTodoList);
     handleAllTodosDelete();
