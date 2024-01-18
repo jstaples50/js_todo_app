@@ -30,6 +30,7 @@ const EditTodo = ({ todo, childChange, setChildChange }) => {
 
   const handleDialogOpen = () => {
     setDialogOpen(true);
+    console.log(todoText);
   };
 
   const handleDialogClose = () => {
@@ -49,7 +50,7 @@ const EditTodo = ({ todo, childChange, setChildChange }) => {
 
   useEffect(() => {
     setTodoText(todo.text);
-  }, []);
+  }, [dialogOpen, childChange]);
 
   return (
     <div>
